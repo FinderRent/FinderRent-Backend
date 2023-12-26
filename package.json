@@ -1,7 +1,7 @@
 {
   "name": "backend",
   "version": "1.0.0",
-  "description": "The Server Side For the FinderRent-App",
+  "description": "The Server Side For the FinderRent-App.",
   "main": "server.js",
   "scripts": {},
   "author": "",
