@@ -13,7 +13,7 @@ mongoos.connect(DB).then(() => {
   console.log('DB connected successfuly!');
 });
 
-const port = 3000;
+const port = process.env.PORT || 3000;
 app.listen(port, () => {
   console.log(`listen on port: ${port}`);
 });
