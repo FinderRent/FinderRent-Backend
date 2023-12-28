@@ -1,4 +1,4 @@
-const AppError = require("./../utils/appError");
+const AppError = require('./../utils/appError');
 
 const handleCastErrorDB = (err) => {
   const message = `Invalid ${err.path}: ${err.value}.`;
@@ -9,8 +9,8 @@ const handleDuplicateFieldsDB = (err) => {
   const value = err.errmsg.match(/(["'])(\\?.)*?\1/)[0];
   console.log(value);
 
-  if (value.includes("@")) {
-    return new AppError("האימייל שהוזן כבר קיים במערכת", 400);
+  if (value.includes('@')) {
+    return new AppError('האימייל שהוזן כבר קיים במערכת', 400);
   }
 
   const message = `ערך שדה כפול: ${value}. אנא השתמש בערך אחר!`;
@@ -20,15 +20,15 @@ const handleDuplicateFieldsDB = (err) => {
 const handleValidationErrorDB = (err) => {
   const errors = Object.values(err.errors).map((el) => el.message);
 
-  const message = `${errors.join("\n")}`;
+  const message = `${errors.join('\n')}`;
   return new AppError(message, 400);
 };
 
 const handleJWTError = () =>
-  new AppError("אסימון לא חוקי. נא להיכנס שוב!", 401);
+  new AppError('אסימון לא חוקי. נא להיכנס שוב!', 401);
 
 const handleJWTExpiredError = () =>
-  new AppError("פג תוקף האסימון שלך! נא להיכנס שוב.", 401);
+  new AppError('פג תוקף האסימון שלך! נא להיכנס שוב.', 401);
 
 const sendErrorDev = (err, res) => {
   res.status(err.statusCode).json({
@@ -50,12 +50,12 @@ const sendErrorProd = (err, res) => {
     // Programming or other unknown error: don't leak error details
   } else {
     // 1) Log error
-    console.error("ERROR 💥", err);
+    console.error('ERROR 💥', err);
 
     // 2) Send generic message
     res.status(500).json({
-      status: "error",
-      message: "שגיאה בלתי צפויה נסה שוב",
+      status: 'error',
+      message: 'שגיאה בלתי צפויה נסה שוב',
     });
   }
 };
@@ -64,20 +64,19 @@ module.exports = (err, req, res, next) => {
   console.log(err.stack);
 
   err.statusCode = err.statusCode || 500;
-  err.status = err.status || "error";
+  err.status = err.status || 'error';
 
-  if (process.env.NODE_ENV === "development") {
-    sendErrorDev(err, res);
-  } else if (process.env.NODE_ENV === "production") {
-    let error = Object.create(err);
+  // if (process.env.NODE_ENV === "development") {
+  //   sendErrorDev(err, res);
+  // } else if (process.env.NODE_ENV === "production") {
+  let error = Object.create(err);
 
-    if (error.name === "CastError") error = handleCastErrorDB(error);
-    if (error.code === 11000) error = handleDuplicateFieldsDB(error);
-    if (error.name === "ValidationError")
-      error = handleValidationErrorDB(error);
-    if (error.name === "JsonWebTokenError") error = handleJWTError();
-    if (error.name === "TokenExpiredError") error = handleJWTExpiredError();
+  if (error.name === 'CastError') error = handleCastErrorDB(error);
+  if (error.code === 11000) error = handleDuplicateFieldsDB(error);
+  if (error.name === 'ValidationError') error = handleValidationErrorDB(error);
+  if (error.name === 'JsonWebTokenError') error = handleJWTError();
+  if (error.name === 'TokenExpiredError') error = handleJWTExpiredError();
 
-    sendErrorProd(error, res);
-  }
+  sendErrorProd(error, res);
+  // }
 };
