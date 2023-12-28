@@ -39,9 +39,11 @@ const createSendToken = (user, statusCode, res) => {
 
 exports.signup = catchAsync(async (req, res, next) => {
   const { userType } = req.body;
+
   if (userType === 'student') {
     // Check if any of the required fields are empty
     const requiredFields = [
+      'userType',
       'firstName',
       'lastName',
       'age',
@@ -61,6 +63,7 @@ exports.signup = catchAsync(async (req, res, next) => {
     }
 
     const newStudent = await Student.create({
+      userType: req.body.userType,
       firstName: req.body.firstName,
       lastName: req.body.lastName,
       age: req.body.age,
@@ -74,5 +77,38 @@ exports.signup = catchAsync(async (req, res, next) => {
     });
 
     createSendToken(newStudent, 200, res);
+  }
+  // the user is landLord
+  else {
+    // Check if any of the required fields are empty
+    const requiredFields = [
+      'userType',
+      'firstName',
+      'lastName',
+      'age',
+      'gender',
+      'email',
+      'password',
+      'passwordConfirm',
+    ];
+
+    for (const field of requiredFields) {
+      if (!req.body[field]) {
+        return next(new AppError('יש למלא את כל השדות', 400));
+      }
+    }
+
+    const newLandlord = await Landlord.create({
+      userType: req.body.userType,
+      firstName: req.body.firstName,
+      lastName: req.body.lastName,
+      age: req.body.age,
+      gender: req.body.gender,
+      email: req.body.email,
+      password: req.body.password,
+      passwordConfirm: req.body.passwordConfirm,
+    });
+
+    createSendToken(newLandlord, 200, res);
   }
 });

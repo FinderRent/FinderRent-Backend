@@ -3,6 +3,9 @@ const validator = require('validator');
 const bcrypt = require('bcryptjs');
 
 const studentSchema = new mongoose.Schema({
+  userType: {
+    type: String,
+  },
   firstName: {
     type: String,
     required: [true, 'נא למלא שם פרטי'],
