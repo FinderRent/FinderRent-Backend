@@ -3,7 +3,9 @@
   "version": "1.0.0",
   "description": "The Server Side For the FinderRent-App.",
   "main": "server.js",
-  "scripts": {},
+  "scripts": {
+    "start": "node server.js"
+  },
   "author": "",
   "license": "ISC",
   "dependencies": {
@@ -13,6 +15,7 @@
     "express": "^4.18.2",
     "jsonwebtoken": "^9.0.2",
     "mongoose": "^8.0.3",
+    "socket.io": "^4.7.2",
     "validator": "^13.11.0"
   }
 }
