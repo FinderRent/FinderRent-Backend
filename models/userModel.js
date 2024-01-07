@@ -2,7 +2,7 @@ const mongoose = require('mongoose');
 const validator = require('validator');
 const bcrypt = require('bcryptjs');
 
-const studentSchema = new mongoose.Schema({
+const userSchema = new mongoose.Schema({
   userType: {
     type: String,
   },
@@ -34,17 +34,13 @@ const studentSchema = new mongoose.Schema({
   },
   academic: {
     type: String,
-    required: [true, 'Please select an educational institution'],
   },
   department: {
     type: String,
-    required: [true, 'Please fill in a department'],
   },
   yearbook: {
     type: String,
-    required: [true, 'Please select a yearbook'],
   },
-
   email: {
     type: String,
     required: [true, 'Please provide email'],
@@ -77,7 +73,7 @@ const studentSchema = new mongoose.Schema({
   passwordResetExpires: Date,
 });
 
-studentSchema.pre('save', async function (next) {
+userSchema.pre('save', async function (next) {
   // Only run this function if password was actually modified
   if (!this.isModified('password')) return next();
 
@@ -89,21 +85,21 @@ studentSchema.pre('save', async function (next) {
   next();
 });
 
-studentSchema.pre('save', function (next) {
+userSchema.pre('save', function (next) {
   if (!this.isModified('password') || this.isNew) return next();
 
   this.passwordChangedAt = Date.now() - 1000;
   next();
 });
 
-studentSchema.methods.correctPassword = async function (
+userSchema.methods.correctPassword = async function (
   candidatePassword,
   userPassword
 ) {
   return await bcrypt.compare(candidatePassword, userPassword);
 };
 
-studentSchema.methods.changedPasswordAfter = function (JWTTimestamp) {
+userSchema.methods.changedPasswordAfter = function (JWTTimestamp) {
   if (this.passwordChangedAt) {
     const changedTimestamp = parseInt(
       this.passwordChangedAt.getTime() / 1000,
@@ -117,6 +113,6 @@ studentSchema.methods.changedPasswordAfter = function (JWTTimestamp) {
   return false;
 };
 
-const Student = mongoose.model('Student', studentSchema);
+const User = mongoose.model('User', userSchema);
 
-module.exports = Student;
+module.exports = User;

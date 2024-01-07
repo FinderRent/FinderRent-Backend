@@ -1,7 +1,8 @@
 const jwt = require('jsonwebtoken');
 
-const Student = require('./../models/studentModel');
-const Landlord = require('./../models/landlordModel');
+// const Student = require('./../models/studentModel');
+// const Landlord = require('./../models/landlordModel');
+const User = require('../models/userModel');
 const catchAsync = require('../utils/catchAsync');
 const AppError = require('./../utils/appError');
 
@@ -62,7 +63,7 @@ exports.signup = catchAsync(async (req, res, next) => {
       }
     }
 
-    const newStudent = await Student.create({
+    const newStudent = await User.create({
       userType: req.body.userType,
       firstName: req.body.firstName,
       lastName: req.body.lastName,
@@ -98,7 +99,7 @@ exports.signup = catchAsync(async (req, res, next) => {
       }
     }
 
-    const newLandlord = await Landlord.create({
+    const newLandlord = await User.create({
       userType: req.body.userType,
       firstName: req.body.firstName,
       lastName: req.body.lastName,

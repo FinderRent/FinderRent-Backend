@@ -1,17 +1,17 @@
-const Student = require('../models/studentModel');
+const User = require('../models/userModel');
 const catchAsync = require('../utils/catchAsync');
 const AppError = require('../utils/appError');
 const factory = require('./handlerFactory');
 
-exports.getAllStudents = catchAsync(async (req, res, next) => {
-  const students = await Student.find();
+exports.getAllUsers = catchAsync(async (req, res, next) => {
+  const users = await User.find();
   res.status(200).json({
     // status: "success",
-    results: students.length,
+    results: users.length,
     data: {
-      students,
+      users,
     },
   });
 });
 
-exports.getStudent = factory.getOne(Student);
+exports.getUser = factory.getOne(User);
