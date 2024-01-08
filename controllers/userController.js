@@ -53,6 +53,7 @@ exports.getAllUsers = catchAsync(async (req, res, next) => {
 exports.getUser = factory.getOne(User);
 
 exports.updateMe = catchAsync(async (req, res, next) => {
+  console.log(req.body);
   // 1) Create error if user POSTs password data
   if (req.body.password || req.body.passwordConfirm) {
     return next(new AppError('This route is not for password updates', 400));
@@ -61,7 +62,8 @@ exports.updateMe = catchAsync(async (req, res, next) => {
   // 2) Filtered out unwanted fields names that are not allowed to be updated
   const filterdedBody = filterObj(
     req.body,
-    'name',
+    'firstName',
+    'lastName',
     'age',
     'academic',
     'department',
