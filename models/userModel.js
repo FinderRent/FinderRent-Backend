@@ -29,8 +29,16 @@ const userSchema = new mongoose.Schema({
   gender: {
     type: String,
   },
-  phoneNumber: {
+  phone: {
     type: String,
+    validate: {
+      validator: function (value) {
+        // Define your regular expression for a valid mobile number
+        const mobileNumberRegex = /^(?:\d{10})?$|^$|^(null|undefined)$/i;
+        return mobileNumberRegex.test(value);
+      },
+      message: 'Please enter a valid 10-digit phone number.',
+    },
   },
   academic: {
     type: String,
