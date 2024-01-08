@@ -2,6 +2,7 @@ const mongoos = require('mongoose');
 const http = require('http');
 const socketio = require('socket.io');
 const dotenv = require('dotenv');
+const cloudinary = require('cloudinary');
 
 const app = require('./app');
 
@@ -14,6 +15,12 @@ const DB = process.env.DATABASE.replace(
 
 mongoos.connect(DB).then(() => {
   console.log('DB connected successfuly!');
+});
+
+cloudinary.v2.config({
+  cloud_name: process.env.CLOUDINARY_NAME,
+  api_key: process.env.CLOUDINARY_API_KEY,
+  api_secret: process.env.CLOUDINARY_API_SECRET,
 });
 
 const server = http.createServer(app);
