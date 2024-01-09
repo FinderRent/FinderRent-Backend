@@ -1,11 +1,12 @@
-const jwt = require('jsonwebtoken');
-const { promisify } = require('util');
+const jwt = require("jsonwebtoken");
+const { promisify } = require("util");
 
 // const Student = require('./../models/studentModel');
 // const Landlord = require('./../models/landlordModel');
-const User = require('../models/userModel');
-const catchAsync = require('../utils/catchAsync');
-const AppError = require('./../utils/appError');
+const User = require("../models/userModel");
+const catchAsync = require("../utils/catchAsync");
+const AppError = require("./../utils/appError");
+const Email = require("../utils/email");
 
 const signToken = (id) => {
   return jwt.sign({ id }, process.env.JWT_SECRET, {
@@ -23,15 +24,15 @@ const createSendToken = (user, statusCode, res) => {
     httpOnly: true,
   };
 
-  if (process.env.NODE_ENV === 'production') cookieOptions.secure = true;
+  if (process.env.NODE_ENV === "production") cookieOptions.secure = true;
 
-  res.cookie('jwt', token, cookieOptions);
+  res.cookie("jwt", token, cookieOptions);
 
   // Remove the password from the output
   user.password = undefined;
 
   res.status(statusCode).json({
-    status: 'success',
+    status: "success",
     token,
     data: {
       user,
@@ -42,25 +43,25 @@ const createSendToken = (user, statusCode, res) => {
 exports.signup = catchAsync(async (req, res, next) => {
   const { userType } = req.body;
 
-  if (userType === 'student') {
+  if (userType === "student") {
     // Check if any of the required fields are empty
     const requiredFields = [
-      'userType',
-      'firstName',
-      'lastName',
-      'age',
-      'academic',
-      'department',
-      'yearbook',
-      'gender',
-      'email',
-      'password',
-      'passwordConfirm',
+      "userType",
+      "firstName",
+      "lastName",
+      "age",
+      "academic",
+      "department",
+      "yearbook",
+      "gender",
+      "email",
+      "password",
+      "passwordConfirm",
     ];
 
     for (const field of requiredFields) {
       if (!req.body[field]) {
-        return next(new AppError('All fields must be filled.', 400));
+        return next(new AppError("All fields must be filled.", 400));
       }
     }
 
@@ -84,19 +85,19 @@ exports.signup = catchAsync(async (req, res, next) => {
   else {
     // Check if any of the required fields are empty
     const requiredFields = [
-      'userType',
-      'firstName',
-      'lastName',
-      'age',
-      'gender',
-      'email',
-      'password',
-      'passwordConfirm',
+      "userType",
+      "firstName",
+      "lastName",
+      "age",
+      "gender",
+      "email",
+      "password",
+      "passwordConfirm",
     ];
 
     for (const field of requiredFields) {
       if (!req.body[field]) {
-        return next(new AppError('All fields must be filled.', 400));
+        return next(new AppError("All fields must be filled.", 400));
       }
     }
 
@@ -120,17 +121,91 @@ exports.login = catchAsync(async (req, res, next) => {
 
   // 1) Check if email and password exist
   if (!email || !password) {
-    return next(new AppError('Please provide email and password.', 400));
+    return next(new AppError("Please provide email and password.", 400));
   }
 
   // 2) Check if student exists && password is correct
-  const user = await User.findOne({ email }).select('+password');
+  const user = await User.findOne({ email }).select("+password");
 
   if (!user || !(await user.correctPassword(password, user.password))) {
-    return next(new AppError('Incorrect email or password.', 401));
+    return next(new AppError("Incorrect email or password.", 401));
   }
 
   // 3) If everything ok, send token to client
+  createSendToken(user, 200, res);
+});
+
+exports.forgotPassword = catchAsync(async (req, res, next) => {
+  const { email } = req.body;
+
+  const requiredFields = ["email"];
+
+  for (const field of requiredFields) {
+    if (!req.body[field]) {
+      return next(new AppError("Please enter your email", 400));
+    }
+  }
+
+  let re = /^\w+([\.-]?\w+)*@\w+([\.-]?\w+)*(\.\w{2,3})+$/;
+  if (!re.test(email)) {
+    return next(new AppError("Please provide valid email", 400));
+  }
+
+  // 1) Get user based on POSTED email
+  const user = await User.findOne({ email: req.body.email });
+  if (!user) {
+    return next(new AppError("There is no user with that email address", 404));
+  }
+
+  const randomNumber = Math.random() * (999999 - 100000) + 100000;
+  const OTP = Math.floor(randomNumber);
+  const otpExpire = 10 * 60 * 1000;
+
+  user.otp = OTP;
+  user.otpExpire = new Date(Date.now() + otpExpire);
+  console.log("OTP: ", OTP);
+
+  await user.save({ validateBeforeSave: false });
+  try {
+    await new Email(user, OTP).sendPasswordReset();
+
+    res.status(200).json({
+      status: "success",
+      message: "OTP sent to email!",
+    });
+  } catch (err) {
+    user.otp = undefined;
+    user.otpExpire = undefined;
+    await user.save({ validateBeforeSave: false });
+    return next(new AppError(err.message, 500));
+  }
+});
+
+exports.resetPassword = catchAsync(async (req, res, next) => {
+  const { otp, password } = req.body;
+
+  const user = await User.findOne({
+    otp,
+    otpExpire: {
+      $gt: Date.now(),
+    },
+  });
+
+  if (!user) {
+    return next(new AppError("Expired or invalid verification code", 400));
+  }
+
+  if (!password) {
+    return next(new AppError("New password must be entered", 400));
+  }
+
+  user.password = req.body.password;
+  user.passwordConfirm = req.body.passwordConfirm;
+  user.otp = undefined;
+  user.otpExpire = undefined;
+
+  await user.save();
+
   createSendToken(user, 200, res);
 });
 
@@ -140,15 +215,15 @@ exports.protect = catchAsync(async (req, res, next) => {
   let token;
   if (
     req.headers.authorization &&
-    req.headers.authorization.startsWith('Bearer')
+    req.headers.authorization.startsWith("Bearer")
   ) {
-    token = req.headers.authorization.split(' ')[1];
+    token = req.headers.authorization.split(" ")[1];
   } else if (req.cookies.jwt) {
     token = req.cookies.jwt;
   }
 
   if (!token) {
-    new AppError('You are not logged in! Please log in to get access.', 401);
+    new AppError("You are not logged in! Please log in to get access.", 401);
   }
   // 2) Verification token
   const decoded = await promisify(jwt.verify)(token, process.env.JWT_SECRET);
@@ -156,12 +231,12 @@ exports.protect = catchAsync(async (req, res, next) => {
   // 3) Check if user still exists
   const currentUser = await User.findById(decoded.id);
   if (!currentUser) {
-    return next(new AppError('This user no longer exists!', 401));
+    return next(new AppError("This user no longer exists!", 401));
   }
 
   // 4) Check if user changed password after the token was issued
   if (currentUser.changedPasswordAfter(decoded.iat)) {
-    new AppError('User recently changed password! Please log in again.', 401);
+    new AppError("User recently changed password! Please log in again.", 401);
   }
 
   // GRANT ACCESS TO PROTECTED ROUTE
