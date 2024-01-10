@@ -124,7 +124,7 @@ exports.login = catchAsync(async (req, res, next) => {
     return next(new AppError("Please provide email and password.", 400));
   }
 
-  // 2) Check if student exists && password is correct
+  // 2) Check if user exists && password is correct
   const user = await User.findOne({ email }).select("+password");
 
   if (!user || !(await user.correctPassword(password, user.password))) {
@@ -242,4 +242,22 @@ exports.protect = catchAsync(async (req, res, next) => {
   // GRANT ACCESS TO PROTECTED ROUTE
   req.user = currentUser;
   next();
+});
+
+exports.updatePassword = catchAsync(async (req, res, next) => {
+  // 1) Get user from collection
+  const user = await User.findById(req.user.id).select("+password");
+
+  // 2) Check if POSTed current password is correct
+  if (!(await user.correctPassword(req.body.passwordCurrent, user.password))) {
+    return next(new AppError("Your current password is incorrect", 401));
+  }
+
+  // 3) if so, update password
+  user.password = req.body.password;
+  user.passwordConfirm = req.body.passwordConfirm;
+  await user.save();
+
+  // 4) Log user in, send JWT
+  createSendToken(user, 200, res);
 });

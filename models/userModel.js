@@ -1,6 +1,6 @@
-const mongoose = require('mongoose');
-const validator = require('validator');
-const bcrypt = require('bcryptjs');
+const mongoose = require("mongoose");
+const validator = require("validator");
+const bcrypt = require("bcryptjs");
 
 const userSchema = new mongoose.Schema({
   userType: {
@@ -8,23 +8,23 @@ const userSchema = new mongoose.Schema({
   },
   firstName: {
     type: String,
-    required: [true, 'Please fill in first name'],
+    required: [true, "Please fill in first name."],
   },
   lastName: {
     type: String,
-    required: [true, 'Please fill in last name'],
+    required: [true, "Please fill in last name."],
   },
   avatar: {
     public_id: { type: String, default: undefined },
     url: {
       type: String,
       default:
-        'https://res.cloudinary.com/dtkpp77xw/image/upload/v1701189732/default_nk5c5h.png',
+        "https://res.cloudinary.com/dtkpp77xw/image/upload/v1701189732/default_nk5c5h.png",
     },
   },
   age: {
     type: String,
-    required: [true, 'Please enter an age'],
+    required: [true, "Please enter age."],
   },
   gender: {
     type: String,
@@ -37,7 +37,7 @@ const userSchema = new mongoose.Schema({
         const mobileNumberRegex = /^(?:\d{10})?$|^$|^(null|undefined)$/i;
         return mobileNumberRegex.test(value);
       },
-      message: 'Please enter a valid 10-digit phone number.',
+      message: "Please enter valid phone number.",
     },
   },
   academic: {
@@ -51,26 +51,26 @@ const userSchema = new mongoose.Schema({
   },
   email: {
     type: String,
-    required: [true, 'Please provide email'],
+    required: [true, "Please provide email."],
     unique: true,
     lowercase: true,
-    validate: [validator.isEmail, 'Please provide a valid email'],
+    validate: [validator.isEmail, "Please provide a valid email."],
   },
   password: {
     type: String,
-    required: [true, 'Please enter a password'],
-    minlength: [6, 'The password must contain at least 6 characters'],
+    required: [true, "Please enter password."],
+    minlength: [6, "The password must contain at least 6 characters."],
     select: false,
   },
   passwordConfirm: {
     type: String,
-    required: [true, 'Please fill in password confirmation'],
+    required: [true, "Please enter password confirmation."],
     validate: {
       // This only works on CREATE and SAVE!!!
       validator: function (el) {
         return el === this.password;
       },
-      message: 'Passwords do not match',
+      message: "Passwords do not match.",
     },
     select: false,
   },
@@ -81,9 +81,9 @@ const userSchema = new mongoose.Schema({
   passwordResetExpires: Date,
 });
 
-userSchema.pre('save', async function (next) {
+userSchema.pre("save", async function (next) {
   // Only run this function if password was actually modified
-  if (!this.isModified('password')) return next();
+  if (!this.isModified("password")) return next();
 
   // Hash the password with cost of 12
   this.password = await bcrypt.hash(this.password, 12);
@@ -93,8 +93,8 @@ userSchema.pre('save', async function (next) {
   next();
 });
 
-userSchema.pre('save', function (next) {
-  if (!this.isModified('password') || this.isNew) return next();
+userSchema.pre("save", function (next) {
+  if (!this.isModified("password") || this.isNew) return next();
 
   this.passwordChangedAt = Date.now() - 1000;
   next();
@@ -121,6 +121,6 @@ userSchema.methods.changedPasswordAfter = function (JWTTimestamp) {
   return false;
 };
 
-const User = mongoose.model('User', userSchema);
+const User = mongoose.model("User", userSchema);
 
 module.exports = User;
