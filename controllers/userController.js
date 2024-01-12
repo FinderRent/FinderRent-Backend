@@ -1,27 +1,27 @@
-const multer = require('multer');
-const cloudinary = require('cloudinary');
+const multer = require("multer");
+const cloudinary = require("cloudinary");
 
-const User = require('../models/userModel');
-const catchAsync = require('../utils/catchAsync');
-const AppError = require('../utils/appError');
-const factory = require('./handlerFactory');
-const { getDataUri } = require('../utils/features');
+const User = require("../models/userModel");
+const catchAsync = require("../utils/catchAsync");
+const AppError = require("../utils/appError");
+const factory = require("./handlerFactory");
+const { getDataUri } = require("../utils/features");
 
 const multerStorage = multer.memoryStorage({
   destination: (req, file, cb) => {
-    cb(null, 'public/img/users');
+    cb(null, "public/img/users");
   },
   filename: (req, file, cb) => {
     // user-543gfgfgf-43656565.jpg
-    const ext = file.mimetype.split('/')[1];
+    const ext = file.mimetype.split("/")[1];
     cb(null, `user-${req.user.id}-${Date.now()}.${ext}`);
   },
 });
 
 const multerFilter = (req, file, cb) => {
-  if (file.mimetype.startsWith('image')) {
+  if (file.mimetype.startsWith("image")) {
     cb(null, true);
-  } else cb(new AppError('Only images can be uploaded!', 400), false);
+  } else cb(new AppError("Only images can be uploaded!", 400), false);
 };
 
 const upload = multer({
@@ -29,7 +29,7 @@ const upload = multer({
   fileFilter: multerFilter,
 });
 
-exports.uploadUserAvatar = upload.single('avatar');
+exports.uploadUserAvatar = upload.single("avatar");
 
 const filterObj = (obj, ...allowedFields) => {
   const newObj = {};
@@ -55,22 +55,17 @@ exports.getUser = factory.getOne(User);
 exports.updateMe = catchAsync(async (req, res, next) => {
   // console.log(req.body);
 
-  // 1) Create error if user POSTs password data
-  if (req.body.password || req.body.passwordConfirm) {
-    return next(new AppError('This route is not for password updates', 400));
-  }
-
-  // 2) Filtered out unwanted fields names that are not allowed to be updated
+  // 1) Filtered out unwanted fields names that are not allowed to be updated
   const filterdedBody = filterObj(
     req.body,
-    'firstName',
-    'lastName',
-    'age',
-    'phone',
-    'academic',
-    'department',
-    'yearbook',
-    'email'
+    "firstName",
+    "lastName",
+    "age",
+    "phone",
+    "academic",
+    "department",
+    "yearbook",
+    "email"
   );
 
   if (req.file) {
@@ -81,7 +76,7 @@ exports.updateMe = catchAsync(async (req, res, next) => {
     }
 
     const uploadToCloud = await cloudinary.v2.uploader.upload(file.content, {
-      folder: 'Users',
+      folder: "Users",
     });
     filterdedBody.avatar = {
       public_id: uploadToCloud.public_id,
@@ -89,14 +84,14 @@ exports.updateMe = catchAsync(async (req, res, next) => {
     };
   }
 
-  // 3) Update student document
+  // 2) Update student document
   const updatedUser = await User.findByIdAndUpdate(req.user.id, filterdedBody, {
     new: true,
     runValidators: true,
   });
 
   res.status(200).json({
-    status: 'success',
+    status: "success",
     data: {
       updatedUser,
     },
