@@ -4,7 +4,6 @@ const cloudinary = require("cloudinary");
 const User = require("../models/userModel");
 const catchAsync = require("../utils/catchAsync");
 const AppError = require("../utils/appError");
-const factory = require("./handlerFactory");
 const { getDataUri } = require("../utils/features");
 
 const multerStorage = multer.memoryStorage({
@@ -50,7 +49,14 @@ exports.getAllUsers = catchAsync(async (req, res, next) => {
   });
 });
 
-exports.getUser = factory.getOne(User);
+exports.getUser = catchAsync(async (req, res, next) => {
+  const user = await User.findById(req.params.id);
+
+  res.status(200).json({
+    status: "success",
+    data: user,
+  });
+});
 
 exports.updateMe = catchAsync(async (req, res, next) => {
   // console.log(req.body);

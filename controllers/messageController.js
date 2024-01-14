@@ -66,7 +66,7 @@ exports.getMessage = catchAsync(async (req, res, next) => {
   const result = await Message.find({ chatId });
 
   if (!result) {
-    return next(new AppError("לא נמצא צ'אט", 404));
+    return next(new AppError("Chat not found", 404));
   }
 
   res.status(200).json(result);
