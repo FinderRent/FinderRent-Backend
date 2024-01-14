@@ -60,6 +60,17 @@ exports.addMessage = catchAsync(async (req, res, next) => {
   res.status(200).json(result);
 });
 
+exports.getAllMessages = catchAsync(async (req, res, next) => {
+  const messages = await Message.find();
+  res.status(200).json({
+    // status: "success",
+    results: messages.length,
+    data: {
+      messages,
+    },
+  });
+});
+
 exports.getMessage = catchAsync(async (req, res, next) => {
   const { chatId } = req.params;
 
@@ -70,4 +81,13 @@ exports.getMessage = catchAsync(async (req, res, next) => {
   }
 
   res.status(200).json(result);
+});
+
+exports.deleteMessage = catchAsync(async (req, res, next) => {
+  await Message.findByIdAndDelete(req.params.id);
+
+  res.status(204).json({
+    status: "success",
+    data: null,
+  });
 });
