@@ -3,6 +3,9 @@ const validator = require("validator");
 const bcrypt = require("bcryptjs");
 
 const userSchema = new mongoose.Schema({
+  pushToken: {
+    type: String,
+  },
   userType: {
     type: String,
   },

@@ -1,8 +1,6 @@
 const jwt = require("jsonwebtoken");
 const { promisify } = require("util");
 
-// const Student = require('./../models/studentModel');
-// const Landlord = require('./../models/landlordModel');
 const User = require("../models/userModel");
 const catchAsync = require("../utils/catchAsync");
 const AppError = require("./../utils/appError");
@@ -66,6 +64,7 @@ exports.signup = catchAsync(async (req, res, next) => {
     }
 
     const newStudent = await User.create({
+      pushToken: req.body.pushToken,
       userType: req.body.userType,
       firstName: req.body.firstName,
       lastName: req.body.lastName,
@@ -102,6 +101,7 @@ exports.signup = catchAsync(async (req, res, next) => {
     }
 
     const newLandlord = await User.create({
+      pushToken: req.body.pushToken,
       userType: req.body.userType,
       firstName: req.body.firstName,
       lastName: req.body.lastName,
@@ -117,7 +117,7 @@ exports.signup = catchAsync(async (req, res, next) => {
 });
 
 exports.login = catchAsync(async (req, res, next) => {
-  const { email, password } = req.body;
+  const { email, password, pushToken } = req.body;
 
   // 1) Check if email and password exist
   if (!email || !password) {
@@ -131,7 +131,11 @@ exports.login = catchAsync(async (req, res, next) => {
     return next(new AppError("Incorrect email or password.", 401));
   }
 
-  // 3) If everything ok, send token to client
+  // 3) change the pushToken
+  user.pushToken = pushToken;
+  await user.save({ validateBeforeSave: false });
+
+  // 4) If everything ok, send token to client
   createSendToken(user, 200, res);
 });
 
