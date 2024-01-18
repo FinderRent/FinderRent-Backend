@@ -2,8 +2,6 @@
 const path = require("path");
 const express = require("express");
 
-// const studentRouter = require('./routes/studentsRoutes.js');
-// const landlordRouter = require('./routes/landlordsRoutes.js');
 const userRouter = require("./routes/userRoutes.js");
 const chatRouter = require("./routes/chatRoutes.js");
 const messageRouter = require("./routes/messageRoutes.js");
@@ -20,7 +18,7 @@ app.set("views", path.join(__dirname, "views"));
 
 app.get("/", (req, res) => {
   // Render the resetPassswordEmail.pug file
-  res.render("resetPasswordEmail");
+  res.render("contactUsEmail");
 });
 
 //middleware

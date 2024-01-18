@@ -139,6 +139,47 @@ exports.login = catchAsync(async (req, res, next) => {
   createSendToken(user, 200, res);
 });
 
+exports.contactUs = catchAsync(async (req, res, next) => {
+  let { firstName, lastName, email, subject, message } = req.body;
+  // console.log(req.body);
+
+  const requiredFields = [
+    "firstName",
+    "lastName",
+    "email",
+    "subject",
+    "message",
+  ];
+
+  for (const field of requiredFields) {
+    if (!req.body[field]) {
+      return next(new AppError("All fields must be filled.", 400));
+    }
+  }
+
+  let re = /^\w+([\.-]?\w+)*@\w+([\.-]?\w+)*(\.\w{2,3})+$/;
+  if (!re.test(email)) {
+    return next(new AppError("Please provide valid email", 400));
+  }
+
+  try {
+    await new Email({
+      firstName,
+      lastName,
+      email,
+      subject,
+      message,
+    }).contactUs();
+
+    res.status(200).json({
+      status: "success",
+      message: "message has been sent",
+    });
+  } catch (err) {
+    return next(new AppError(err.message, 500));
+  }
+});
+
 exports.forgotPassword = catchAsync(async (req, res, next) => {
   const { email } = req.body;
 
@@ -171,7 +212,7 @@ exports.forgotPassword = catchAsync(async (req, res, next) => {
 
   await user.save({ validateBeforeSave: false });
   try {
-    await new Email(user, OTP).sendPasswordReset();
+    await new Email({ user, OTP }).sendPasswordReset();
 
     res.status(200).json({
       status: "success",
@@ -198,7 +239,6 @@ exports.resetPassword = catchAsync(async (req, res, next) => {
   if (!user) {
     return next(new AppError("Expired or invalid verification code", 400));
   }
-
   if (!password) {
     return next(new AppError("New password must be entered", 400));
   }
@@ -207,7 +247,6 @@ exports.resetPassword = catchAsync(async (req, res, next) => {
   user.passwordConfirm = req.body.passwordConfirm;
   user.otp = undefined;
   user.otpExpire = undefined;
-
   await user.save();
 
   createSendToken(user, 200, res);
@@ -215,7 +254,6 @@ exports.resetPassword = catchAsync(async (req, res, next) => {
 
 exports.protect = catchAsync(async (req, res, next) => {
   // 1) Getting token and check if it's there
-
   let token;
   if (
     req.headers.authorization &&
