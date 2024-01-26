@@ -84,7 +84,11 @@ exports.getMessage = catchAsync(async (req, res, next) => {
 });
 
 exports.deleteMessage = catchAsync(async (req, res, next) => {
-  await Message.findByIdAndDelete(req.params.id);
+  const message = await Message.findByIdAndDelete(req.params.id);
+
+  if (message.image) {
+    await cloudinary.v2.uploader.destroy(message.image.public_id);
+  }
 
   res.status(204).json({
     status: "success",
