@@ -9,7 +9,7 @@ module.exports = class Email {
       this.to = user.email;
       this.firstName = user.firstName;
       this.OTP = OTP;
-      this.from = `FinderRent<${process.env.EMAIL_FROM}>`;
+      this.from = `FindeRent<${process.env.EMAIL_FROM}>`;
     } else {
       const { firstName, lastName, email, subject, message } = options;
       this.to = "maorsa9@gmail.com";
