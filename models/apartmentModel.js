@@ -137,6 +137,13 @@ const apartmentSchema = new mongoose.Schema({
     default: Date.now(),
     select: false,
   },
+  //an array of the interested students that marks the apartment
+  interesteds: [
+    {
+      type: mongoose.Schema.Types.ObjectId,
+      ref: "users",
+    },
+  ],
 });
 
 //creating the schema in the DBs

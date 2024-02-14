@@ -1,6 +1,7 @@
 const mongoose = require("mongoose");
 const validator = require("validator");
 const bcrypt = require("bcryptjs");
+const Apartment = require("./apartmentModel");
 
 const userSchema = new mongoose.Schema({
   pushToken: {
@@ -77,6 +78,13 @@ const userSchema = new mongoose.Schema({
     },
     select: false,
   },
+  //an array of the favourite apartment that the student mark with
+  favouriteApartments: [
+    {
+      type: mongoose.Schema.Types.ObjectId,
+      ref: "apartments",
+    },
+  ],
   otp: Number,
   otpExpire: Date,
   passwordChangedAt: Date,
