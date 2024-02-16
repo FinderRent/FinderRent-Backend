@@ -1,6 +1,7 @@
 //backend server
 const path = require("path");
 const express = require("express");
+const favicon = require("serve-favicon");
 
 const userRouter = require("./routes/userRoutes.js");
 const chatRouter = require("./routes/chatRoutes.js");
@@ -14,12 +15,14 @@ const app = express();
 
 app.use(express.json());
 
+app.use(favicon(path.join(__dirname, "public", "favicon.ico")));
+
 // pug views to style the sending mail
 app.set("view engine", "pug");
 app.set("views", path.join(__dirname, "views"));
 
 app.get("/", (req, res) => {
-  res.send("Server is Live");
+  res.render("serverView");
 });
 
 //middleware
