@@ -19,8 +19,7 @@ app.set("view engine", "pug");
 app.set("views", path.join(__dirname, "views"));
 
 app.get("/", (req, res) => {
-  // Render the resetPassswordEmail.pug file
-  res.render("contactUsEmail");
+  res.send("Server is Live");
 });
 
 //middleware
