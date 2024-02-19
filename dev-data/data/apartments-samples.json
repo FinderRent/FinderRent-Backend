@@ -1,0 +1,70 @@
+[
+  {
+    "interesteds": [],
+    "address": {
+      "street": "Yohana zabutinsky",
+      "city": "Beer Sheva",
+      "country": "Israel",
+      "buildingNumber": 3,
+      "apartmentNumber": 23
+    },
+    "distanceFromAcademy": 23,
+    "totalCapacity": 3,
+    "realTimeCapacity": 2,
+    "about": "this is test apartment",
+    "numberOfRooms": 3,
+    "apartmentContent": {
+      "tv": false,
+      "balcony": false,
+      "bed": true,
+      "wifi": false,
+      "oven": false,
+      "microwave": true,
+      "couch": false,
+      "coffeeTable": false,
+      "waterHeater": false,
+      "washer": true,
+      "dryer": true,
+      "iron": true,
+      "refrigirator": false,
+      "freezer": false
+    },
+    "rating": 1,
+    "price": 2000,
+    "images": []
+  },
+  {
+    "interesteds": [],
+    "address": {
+      "street": "Yohana zabutinsky",
+      "city": "Beer Sheva",
+      "country": "Israel",
+      "buildingNumber": 3,
+      "apartmentNumber": 23
+    },
+    "distanceFromAcademy": 10,
+    "totalCapacity": 2,
+    "realTimeCapacity": 0,
+    "about": "this is test apartment",
+    "numberOfRooms": 2,
+    "apartmentContent": {
+      "tv": true,
+      "balcony": false,
+      "bed": true,
+      "wifi": false,
+      "oven": false,
+      "microwave": true,
+      "couch": false,
+      "coffeeTable": false,
+      "waterHeater": false,
+      "washer": true,
+      "dryer": true,
+      "iron": true,
+      "refrigirator": false,
+      "freezer": false
+    },
+    "rating": 5,
+    "price": 5000,
+    "images": []
+  }
+]
