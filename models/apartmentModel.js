@@ -98,13 +98,13 @@ const apartmentSchema = new mongoose.Schema({
   totalCapacity: {
     type: Number,
     require: [true, "An apartment must have a capacity"],
-    min: [1, "Apartment capacity must be bigger than zero"],
+    min: [0, "Apartment capacity must be positive"],
     max: [10, "Apartment capacity must be bigger maximun 10"],
   },
   realTimeCapacity: {
     type: Number,
     require: [true, "An apartment must have a capacity"],
-    min: [1, "Apartment capacity must be bigger than zero"],
+    min: [0, "Apartment capacity must be positive"],
     max: [10, "Apartment capacity must be bigger maximun 10"],
     default: 0,
   },
@@ -144,6 +144,21 @@ const apartmentSchema = new mongoose.Schema({
       ref: "users",
     },
   ],
+  floor: {
+    type: Number,
+    require: [true, "An apartment must have a floor number"],
+  },
+  owner: [
+    {
+      type: mongoose.Schema.Types.ObjectId,
+      ref: "users",
+    },
+  ],
+  apartmentType: {
+    type: String,
+    trim: true,
+    require: [true, "An apartment must have a type"],
+  },
 });
 
 //creating the schema in the DBs

@@ -31,7 +31,9 @@
     },
     "rating": 1,
     "price": 2000,
-    "images": []
+    "images": [],
+    "floor": 4,
+    "apartmentType": "Land House"
   },
   {
     "interesteds": [],
@@ -65,6 +67,8 @@
     },
     "rating": 5,
     "price": 5000,
-    "images": []
+    "images": [],
+    "floor": 4,
+    "apartmentType": "Land House"
   }
 ]
