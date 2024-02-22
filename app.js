@@ -1,6 +1,7 @@
 //backend server
 const path = require("path");
 const express = require("express");
+const cors = require("cors");
 const favicon = require("serve-favicon");
 
 const userRouter = require("./routes/userRoutes.js");
@@ -14,6 +15,12 @@ const globalErrorHandler = require("./controllers/errorController.js");
 const app = express();
 
 app.use(express.json());
+app.use(
+  cors({
+    credentials: true,
+    methods: ["GET", "POST", "PATCH", "DELETE"],
+  })
+);
 
 app.use(favicon(path.join(__dirname, "public", "favicon.ico")));
 
