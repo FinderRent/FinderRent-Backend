@@ -8,7 +8,6 @@ const userRouter = require("./routes/userRoutes.js");
 const chatRouter = require("./routes/chatRoutes.js");
 const messageRouter = require("./routes/messageRoutes.js");
 const apartmentRouter = require("./routes/apartmentRoutes.js");
-
 const AppError = require("./utils/appError.js");
 const globalErrorHandler = require("./controllers/errorController.js");
 
@@ -34,8 +33,6 @@ app.get("/", (req, res) => {
 
 //middleware
 
-// app.use('/api/v1/students', studentRouter);
-// app.use('/api/v1/landlords', landlordRouter);
 app.use("/api/v1/users", userRouter);
 app.use("/api/v1/chats", chatRouter);
 app.use("/api/v1/messages", messageRouter);
