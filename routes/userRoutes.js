@@ -25,6 +25,9 @@ router.patch(
 );
 
 router.route("/").get(userController.getAllUsers);
-router.route("/:id").get(userController.getUser);
+router
+  .route("/:id")
+  .get(userController.getUser)
+  .patch(userController.updateFavourite);
 
 module.exports = router;

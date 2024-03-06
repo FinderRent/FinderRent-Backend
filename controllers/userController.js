@@ -2,6 +2,7 @@ const multer = require("multer");
 const cloudinary = require("cloudinary");
 
 const User = require("../models/userModel");
+const Apartment = require("../models/apartmentModel");
 const catchAsync = require("../utils/catchAsync");
 const AppError = require("../utils/appError");
 const { getDataUri } = require("../utils/features");
@@ -102,3 +103,68 @@ exports.updateMe = catchAsync(async (req, res, next) => {
     },
   });
 });
+
+exports.updateFavourite = async (req, res) => {
+  try {
+    const { id } = req.params; // Get user ID from route params
+    const { apartmentID, action } = req.body;
+    let user = await User.findById(id);
+
+    if (!user) {
+      return res.status(404).json({
+        status: "fail",
+        message: "user not found",
+      });
+    }
+
+    if (apartmentID && action) {
+      let apartment = await Apartment.findById(apartmentID);
+
+      if (!apartment) {
+        return res.status(404).json({
+          status: "fail",
+          message: "apartment not found",
+        });
+      }
+
+      if (action === "add") {
+        // Check if the user ID is already in the interesteds array
+        const isAlreadyFavourite = user.favouriteApartments.includes(
+          apartment._id
+        );
+
+        if (isAlreadyFavourite) {
+          return res.status(400).json({
+            status: "fail",
+            message: "apartment is already favourite for this user",
+          });
+        }
+        console.log(apartment);
+        user.favouriteApartments.push(apartment);
+      } else if (action === "remove") {
+        user.favouriteApartments = user.favouriteApartments.filter(
+          (favourite) => favourite.toString() !== apartmentID
+        );
+      } else {
+        return res.status(400).json({
+          status: "fail",
+          message: "Invalid action. Must be 'add' or 'remove'.",
+        });
+      }
+    }
+    // Save the updated apartment object
+    await user.save();
+
+    res.status(200).json({
+      status: "success",
+      data: {
+        user,
+      },
+    });
+  } catch (err) {
+    res.status(500).json({
+      status: "error",
+      message: err.message,
+    });
+  }
+};
