@@ -203,6 +203,41 @@ exports.updateApartment = async (req, res) => {
   }
 };
 
+exports.isFavourite = async (req, res) => {
+  const { apartmentID, userID } = req.params;
+  let user;
+  let apartment;
+  try {
+    apartment = await Apartment.findById(apartmentID);
+  } catch (err) {
+    return res.status(404).json({
+      status: "fail",
+      message: "apartment not found",
+    });
+  }
+  try {
+    user = await User.findById(userID);
+  } catch (err) {
+    return res.status(404).json({
+      status: "fail",
+      message: "user not found",
+    });
+  }
+
+  const isAlreadyInterested = apartment.interesteds.includes(user._id);
+
+  if (isAlreadyInterested) {
+    res.status(200).json({
+      status: "success",
+      data: true,
+    });
+  } else {
+    res.status(200).json({
+      status: "success",
+      data: false,
+    });
+  }
+};
 exports.deleteApartment = async (req, res) => {
   try {
     await Apartment.findByIdAndDelete(req.params.id);

@@ -14,4 +14,6 @@ router
   .patch(apartmentController.updateApartment)
   .delete(apartmentController.deleteApartment);
 
+router.route("/:apartmentID/:userID").get(apartmentController.isFavourite);
+
 module.exports = router;
