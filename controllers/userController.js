@@ -144,7 +144,6 @@ exports.updateFavourite = async (req, res) => {
       const isAlreadyFavourite = user.favouriteApartments.includes(
         apartment._id
       );
-      console.log(isAlreadyFavourite);
       if (isAlreadyFavourite) {
         user.favouriteApartments = user.favouriteApartments.filter(
           (favourite) => favourite.toString() !== apartmentID
