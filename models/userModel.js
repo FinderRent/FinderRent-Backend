@@ -45,7 +45,7 @@ const userSchema = new mongoose.Schema({
     },
   },
   academic: {
-    type: String,
+    type: [String],
   },
   department: {
     type: String,
