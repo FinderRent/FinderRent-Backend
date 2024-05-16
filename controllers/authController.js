@@ -40,7 +40,8 @@ const createSendToken = (user, statusCode, res) => {
 
 exports.signup = catchAsync(async (req, res, next) => {
   const { userType } = req.body;
-  console.log(req.body.academic);
+  // console.log(req.body);
+
   if (userType === "student") {
     // Check if any of the required fields are empty
     const requiredFields = [
@@ -70,6 +71,7 @@ exports.signup = catchAsync(async (req, res, next) => {
       lastName: req.body.lastName,
       age: req.body.age,
       academic: req.body.academic,
+      coordinates: req.body.coordinates,
       department: req.body.department,
       yearbook: req.body.yearbook,
       gender: req.body.gender,

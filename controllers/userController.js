@@ -69,6 +69,7 @@ exports.updateMe = catchAsync(async (req, res, next) => {
     "age",
     "phone",
     "academic",
+    "coordinates",
     "department",
     "yearbook",
     "email"
