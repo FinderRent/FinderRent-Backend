@@ -43,9 +43,7 @@ const userSchema = new mongoose.Schema({
       message: "Please enter valid phone number.",
     },
   },
-  academic: {
-    type: [String],
-  },
+  academic: [String],
   department: {
     type: String,
   },
