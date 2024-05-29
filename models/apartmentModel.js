@@ -60,6 +60,22 @@ const apartmentContentSchema = new mongoose.Schema({
   },
 });
 
+//define the apartment coordinates location
+const coordinatesSchema = new mongoose.Schema({
+  latitude: {
+    type: Number,
+    required: true,
+    min: -90,
+    max: 90,
+  },
+  longitude: {
+    type: Number,
+    required: true,
+    min: -180,
+    max: 180,
+  },
+});
+
 //Defining address schema
 const addressSchema = new mongoose.Schema({
   street: {
@@ -82,6 +98,10 @@ const addressSchema = new mongoose.Schema({
     require: [true, "An apartment must have a number"],
   },
   apartmentNumber: { type: Number },
+  coordinates: {
+    type: coordinatesSchema,
+    require: [true, "An apartment must have coordinates"],
+  },
 });
 
 //Defining apartment schema

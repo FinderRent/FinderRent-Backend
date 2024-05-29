@@ -238,6 +238,7 @@ exports.isFavourite = async (req, res) => {
     });
   }
 };
+
 exports.deleteApartment = async (req, res) => {
   try {
     await Apartment.findByIdAndDelete(req.params.id);
