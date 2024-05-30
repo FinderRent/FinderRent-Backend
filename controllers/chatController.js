@@ -2,6 +2,17 @@ const Chat = require("../models/chatModel");
 const AppError = require("../utils/appError");
 const catchAsync = require("../utils/catchAsync");
 
+exports.getAllChats = catchAsync(async (req, res, next) => {
+  const chats = await Chat.find();
+  res.status(200).json({
+    // status: "success",
+    results: chats.length,
+    data: {
+      chats,
+    },
+  });
+});
+
 exports.createChat = catchAsync(async (req, res, next) => {
   const newChat = new Chat({
     members: [req.body.senderId, req.body.receiverId],
