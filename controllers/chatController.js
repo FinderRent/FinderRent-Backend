@@ -1,14 +1,44 @@
 const Chat = require("../models/chatModel");
+const User = require("./../models/userModel");
 const AppError = require("../utils/appError");
 const catchAsync = require("../utils/catchAsync");
 
 exports.createChat = catchAsync(async (req, res, next) => {
-  const newChat = new Chat({
-    members: [req.body.senderId, req.body.receiverId],
-  });
+  console.log("123");
+  //checking if chat is already exist
+  const user = await User.findById(req.body.senderId);
+  console.log(user);
+  let chatExists = false;
 
-  const result = await newChat.save();
-  res.status(200).json(result);
+  for (const chat of user.chats) {
+    if (chat.userID === req.body.receiverId) {
+      chatExists = true;
+      break;
+    }
+  }
+
+  if (!chatExists) {
+    const newChat = new Chat({
+      members: [req.body.senderId, req.body.receiverId],
+    });
+    const result = await newChat.save();
+
+    //add the studentID to landlord chats array----
+    user.chats.push({
+      userID: req.body.receiverId,
+      chatID: result._id,
+    });
+    await user.save();
+
+    res.status(200).json(result);
+  }
+
+  // const newChat = new Chat({
+  //   members: [req.body.senderId, req.body.receiverId],
+  // });
+
+  // const result = await newChat.save();
+  res.status(201);
 });
 
 exports.userChats = catchAsync(async (req, res, next) => {
