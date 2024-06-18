@@ -101,7 +101,7 @@ const userSchema = new mongoose.Schema({
     },
   ],
   chats: {
-    type: chatsSchema,
+    type: [chatsSchema],
     default: [],
   },
   //if the user is landlord, the apartments he own is in this array. if student - array is null
