@@ -2,6 +2,17 @@ const mongoose = require("mongoose");
 const validator = require("validator");
 const bcrypt = require("bcryptjs");
 
+const chatsSchema = new mongoose.Schema({
+  userID: {
+    type: mongoose.Schema.Types.ObjectId,
+    ref: "users",
+  },
+  chatID: {
+    type: mongoose.Schema.Types.ObjectId,
+    ref: "chats",
+  },
+});
+
 const userSchema = new mongoose.Schema({
   pushToken: {
     type: String,
@@ -89,6 +100,10 @@ const userSchema = new mongoose.Schema({
       default: [],
     },
   ],
+  chats: {
+    type: chatsSchema,
+    default: [],
+  },
   //if the user is landlord, the apartments he own is in this array. if student - array is null
   myApartments: [
     {
