@@ -15,10 +15,9 @@ exports.getAllChats = catchAsync(async (req, res, next) => {
 });
 
 exports.createChat = catchAsync(async (req, res, next) => {
-  console.log("123");
   //checking if chat is already exist
   const user = await User.findById(req.body.senderId);
-  console.log(user);
+
   let chatExists = false;
 
   for (const chat of user.chats) {
