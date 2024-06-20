@@ -48,7 +48,7 @@ exports.createChat = catchAsync(async (req, res, next) => {
   // });
 
   // const result = await newChat.save();
-  res.status(201);
+  res.status(200);
 });
 
 exports.userChats = catchAsync(async (req, res, next) => {
