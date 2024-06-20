@@ -6,7 +6,8 @@ const router = express.Router();
 router
   .route("/")
   .get(apartmentController.getAllApartments)
-  .post(apartmentController.createApartment);
+  .post(apartmentController.createApartment)
+  .patch(apartmentController.updateEditedApartment);
 
 router
   .route("/:id")

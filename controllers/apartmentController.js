@@ -63,77 +63,45 @@ exports.createApartment = async (req, res) => {
   }
 };
 
-// exports.updateApartment = async (req, res) => {
-//   try {
-//     const { id } = req.params; // Get apartment ID from route params
-//     const { userID, action, ...updateData } = req.body; // Destructure userID and action from request body, and store the rest in updateData
-//     let apartment = await Apartment.findById(id);
+exports.updateEditedApartment = async (req, res) => {
+  try {
+    // const { id } = req.params; // Get apartment ID from route params
+    // const { userID, action, ...updateData } = req.body; // Destructure userID and action from request body, and store the rest in updateData
+    const { id, ...updateData } = req.body; // Destructure userID and action from request body, and store the rest in updateData
 
-//     if (!apartment) {
-//       return res.status(404).json({
-//         status: "fail",
-//         message: "Apartment not found",
-//       });
-//     }
+    let apartment = await Apartment.findById(id);
 
-//     if (userID && action) {
-//       let user = await User.findById(userID);
+    if (!apartment) {
+      return res.status(404).json({
+        status: "fail",
+        message: "Apartment not found",
+      });
+    }
 
-//       if (!user) {
-//         return res.status(404).json({
-//           status: "fail",
-//           message: "User not found",
-//         });
-//       }
+    // Update apartment details if updateData is not empty
+    if (Object.keys(updateData).length > 0) {
+      apartment = await Apartment.findByIdAndUpdate(id, updateData, {
+        new: true,
+        runValidators: true,
+      });
+    }
 
-//       if (action === "add") {
-//         // Check if the user ID is already in the interesteds array
-//         const isAlreadyInterested = apartment.interesteds.includes(user._id);
-//         if (isAlreadyInterested) {
-//           return res.status(400).json({
-//             status: "fail",
-//             message: "User is already interested in this apartment",
-//           });
-//         }
-//         // Add user reference to the interesteds array
-//         apartment.interesteds.push(user);
-//       } else if (action === "remove") {
-//         // Remove user reference from the interesteds array
-//         apartment.interesteds = apartment.interesteds.filter(
-//           (interested) => interested.toString() !== userID
-//         );
-//       } else {
-//         return res.status(400).json({
-//           status: "fail",
-//           message: "Invalid action. Must be 'add' or 'remove'.",
-//         });
-//       }
-//     }
+    // Save the updated apartment object
+    await apartment.save();
 
-//     // Update apartment details if updateData is not empty
-//     if (Object.keys(updateData).length > 0) {
-//       apartment = await Apartment.findByIdAndUpdate(id, updateData, {
-//         new: true,
-//         runValidators: true,
-//       });
-//     }
-
-//     // Save the updated apartment object
-//     await apartment.save();
-
-//     res.status(200).json({
-//       status: "success",
-//       data: {
-//         apartment,
-//       },
-//     });
-//   } catch (err) {
-//     res.status(500).json({
-//       status: "error",
-//       message: err.message,
-//     });
-//   }
-// };
+    res.status(200).json({
+      status: "success",
+      data: {
+        apartment,
+      },
+    });
+  } catch (err) {
+    res.status(500).json({
+      status: "error",
+      message: err.message,
+    });
+  }
+};
 
 exports.updateApartment = async (req, res) => {
   try {
