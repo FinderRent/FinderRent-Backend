@@ -26,7 +26,7 @@ cloudinary.v2.config({
 const server = http.createServer(app);
 const io = new socketio.Server(server, {
   cors: {
-    origin: "https://finder-rent-backend.vercel.app",
+    origin: "https://finalprojectserver0-5.onrender.com",
     credentials: true,
   },
 });
