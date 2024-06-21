@@ -179,6 +179,12 @@ const apartmentSchema = new mongoose.Schema({
     trim: true,
     require: [true, "An apartment must have a type"],
   },
+  tenants: [
+    {
+      type: mongoose.Schema.Types.ObjectId,
+      ref: "users",
+    },
+  ],
 });
 
 //creating the schema in the DBs
