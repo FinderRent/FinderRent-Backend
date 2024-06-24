@@ -1,6 +1,6 @@
 const multer = require("multer");
 const cloudinary = require("cloudinary");
-
+const APIFeatures = require("./../utils/apiFeatures");
 const User = require("../models/userModel");
 const Apartment = require("./../models/apartmentModel");
 const catchAsync = require("../utils/catchAsync");
@@ -176,6 +176,33 @@ exports.updateFavourite = async (req, res) => {
     res.status(500).json({
       status: "error",
       message: err.message,
+    });
+  }
+};
+
+exports.getAllStudents = async (req, res) => {
+  try {
+    //EXECUTE THE QUERY
+    const features = new APIFeatures(User.find(), req.query)
+      .filter()
+      .sort()
+      .limitFields()
+      .paginate();
+
+    const users = await features.query;
+
+    //SEND RESPONSE
+    res.status(200).json({
+      status: "success",
+      results: users.length,
+      data: {
+        users,
+      },
+    });
+  } catch (err) {
+    res.status(404).json({
+      status: "fail",
+      message: err,
     });
   }
 };

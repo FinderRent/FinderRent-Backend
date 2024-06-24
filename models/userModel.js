@@ -104,6 +104,12 @@ const userSchema = new mongoose.Schema({
     type: [chatsSchema],
     default: [],
   },
+  hobbies: {
+    type: String,
+  },
+  funFact: {
+    type: String,
+  },
   //if the user is landlord, the apartments he own is in this array. if student - array is null
   myApartments: [
     {

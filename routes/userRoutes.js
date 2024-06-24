@@ -30,4 +30,6 @@ router
   .get(userController.getUser)
   .patch(userController.updateFavourite);
 
+router.route("/students").get(userController.getAllStudents);
+
 module.exports = router;
