@@ -1,5 +1,6 @@
 const multer = require("multer");
 const cloudinary = require("cloudinary");
+
 const APIFeatures = require("./../utils/apiFeatures");
 const User = require("../models/userModel");
 const Apartment = require("./../models/apartmentModel");
@@ -59,7 +60,7 @@ exports.getUser = catchAsync(async (req, res, next) => {
 });
 
 exports.updateMe = catchAsync(async (req, res, next) => {
-  // console.log(req.body);
+  console.log(req.body);
 
   // 1) Filtered out unwanted fields names that are not allowed to be updated
   const filterdedBody = filterObj(
@@ -72,6 +73,8 @@ exports.updateMe = catchAsync(async (req, res, next) => {
     "coordinates",
     "department",
     "yearbook",
+    "hobbies",
+    "funFact",
     "email"
   );
 

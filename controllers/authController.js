@@ -63,7 +63,7 @@ exports.signup = catchAsync(async (req, res, next) => {
         return next(new AppError("All fields must be filled.", 400));
       }
     }
-
+    console.log(req.body);
     const newStudent = await User.create({
       pushToken: req.body.pushToken,
       userType: req.body.userType,

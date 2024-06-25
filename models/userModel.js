@@ -58,8 +58,8 @@ const userSchema = new mongoose.Schema({
     type: String,
   },
   coordinates: {
-    lat: { type: Number },
-    lng: { type: Number },
+    lat: { type: String },
+    lng: { type: String },
   },
   department: {
     type: String,
