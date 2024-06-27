@@ -33,7 +33,7 @@ const userSchema = new mongoose.Schema({
     url: {
       type: String,
       default:
-        "https://res.cloudinary.com/dtkpp77xw/image/upload/v1701189732/default_nk5c5h.png",
+        "https://res.cloudinary.com/finderent/image/upload/v1719482644/default_gdug47.png",
     },
   },
   age: {
