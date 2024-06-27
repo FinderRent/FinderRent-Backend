@@ -12,7 +12,7 @@ module.exports = class Email {
       this.from = `FindeRent<${process.env.EMAIL_FROM}>`;
     } else {
       const { firstName, lastName, email, subject, message } = options;
-      this.to = "maorsa9@gmail.com";
+      this.to = "finderent2024@gmail.com";
       this.firstName = firstName;
       this.lastName = lastName;
       this.from = email;
@@ -22,25 +22,15 @@ module.exports = class Email {
   }
 
   newTransport() {
-    if (process.env.NODE_ENV === "production") {
-      // Sendgrid
-      return nodemailer.createTransport({
-        service: "SendGrid",
-        auth: {
-          user: process.env.SENDGRID_USERNAME,
-          pass: process.env.SENDGRID_PASSWORD,
-        },
-      });
-    } else {
-      return nodemailer.createTransport({
-        host: process.env.EMAIL_HOST,
-        port: process.env.EMAIL_PORT,
-        auth: {
-          user: process.env.EMAIL_USERNAME,
-          pass: process.env.EMAIL_PASSWORD,
-        },
-      });
-    }
+    return nodemailer.createTransport({
+      host: process.env.EMAIL_HOST, // SMTP server address (e.g., smtp.gmail.com)
+      port: process.env.EMAIL_PORT, // SMTP port (e.g., 587)
+      auth: {
+        user: process.env.EMAIL_USERNAME, // Your email username
+        pass: process.env.EMAIL_PASSWORD, // Your email password
+      },
+      // secure: process.env.EMAIL_PORT === "465", // Use true for port 465, false for other ports
+    });
   }
 
   async send(template, subject) {
