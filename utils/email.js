@@ -23,11 +23,11 @@ module.exports = class Email {
 
   newTransport() {
     return nodemailer.createTransport({
-      host: process.env.EMAIL_HOST, // SMTP server address (e.g., smtp.gmail.com)
-      port: process.env.EMAIL_PORT, // SMTP port (e.g., 587)
+      host: process.env.EMAIL_HOST,
+      port: process.env.EMAIL_PORT,
       auth: {
-        user: process.env.EMAIL_USERNAME, // Your email username
-        pass: process.env.EMAIL_PASSWORD, // Your email password
+        user: process.env.EMAIL_USERNAME,
+        pass: process.env.EMAIL_PASSWORD,
       },
       // secure: process.env.EMAIL_PORT === "465", // Use true for port 465, false for other ports
     });
