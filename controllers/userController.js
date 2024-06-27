@@ -60,7 +60,7 @@ exports.getUser = catchAsync(async (req, res, next) => {
 });
 
 exports.updateMe = catchAsync(async (req, res, next) => {
-  console.log(req.body);
+  // console.log(req.body);
 
   // 1) Filtered out unwanted fields names that are not allowed to be updated
   const filterdedBody = filterObj(
@@ -81,6 +81,7 @@ exports.updateMe = catchAsync(async (req, res, next) => {
   }
 
   if (req.file) {
+    console.log(req.file);
     const file = getDataUri(req.file);
 
     if (req.user.avatar.public_id) {
