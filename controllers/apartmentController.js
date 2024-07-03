@@ -1,6 +1,8 @@
 const Apartment = require("./../models/apartmentModel");
 const User = require("../models/userModel");
 const APIFeatures = require("./../utils/apiFeatures");
+const catchAsync = require("../utils/catchAsync");
+const AppError = require("../utils/appError");
 
 exports.getAllApartments = async (req, res) => {
   try {
@@ -222,3 +224,33 @@ exports.deleteApartment = async (req, res) => {
     });
   }
 };
+
+// api/v1/tours/tours-within/233/center/34.111745,-118.113491/unit/mi
+exports.getApartmentWithin = catchAsync(async (req, res, next) => {
+  const { distance, latlng, unit } = req.params;
+  const [lat, lng] = latlng.split(",");
+
+  const radius = unit === "mi" ? distance / 3963.2 : distance / 6378.1;
+
+  if (!lat || !lng) {
+    next(
+      new AppError(
+        "Please provide latitur and longitude in the format lat,lng",
+        400
+      )
+    );
+  }
+
+  const apartment = await Apartment.find({
+    startLocation: { $geoWithin: { $centerSphere: [[lng, lat], radius] } },
+  });
+  console.log(distance, lat, lng, unit);
+
+  res.status(200).json({
+    status: "success",
+    results: apartment.length,
+    data: {
+      data: apartment,
+    },
+  });
+});

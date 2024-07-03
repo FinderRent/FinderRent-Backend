@@ -15,6 +15,10 @@ router
   .patch(apartmentController.updateApartment)
   .delete(apartmentController.deleteApartment);
 
-router.route("/:apartmentID/:userID").get(apartmentController.isFavourite);
+router
+  .route("/apartments-within/:distance/center/:latlng/unit/:unit")
+  .get(apartmentController.getApartmentWithin);
+
+// router.route("/:apartmentID/:userID").get(apartmentController.isFavourite);
 
 module.exports = router;
