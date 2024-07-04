@@ -115,15 +115,15 @@ const apartmentSchema = new mongoose.Schema({
     require: [true, "An apartment must have distance fron the academy"],
     min: [0, "Distance must be positive number"],
   },
-  startLocation: {
-    // GeoJSON
-    type: {
-      type: String,
-      default: "Point",
-      enum: ["Point"],
-    },
-    coordinates: [Number],
-  },
+  // startLocation: {
+  //   // GeoJSON
+  //   type: {
+  //     type: String,
+  //     default: "Point",
+  //     enum: ["Point"],
+  //   },
+  //   coordinates: [Number],
+  // },
   totalCapacity: {
     type: Number,
     require: [true, "An apartment must have a capacity"],

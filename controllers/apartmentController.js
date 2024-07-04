@@ -231,7 +231,7 @@ exports.getApartmentWithin = catchAsync(async (req, res, next) => {
   const [lat, lng] = latlng.split(",");
 
   const radius = unit === "mi" ? distance / 3963.2 : distance / 6378.1;
-
+  console.log(radius);
   if (!lat || !lng) {
     next(
       new AppError(
