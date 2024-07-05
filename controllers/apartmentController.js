@@ -48,8 +48,14 @@ exports.getApartment = async (req, res) => {
 };
 
 exports.createApartment = async (req, res) => {
+  console.log(req.body);
+  const data = req.body;
+  data.startLocation = data.startLocation || {
+    type: "Point",
+    coordinates: [65.234556, 23.232323],
+  };
   try {
-    const newApartment = await Apartment.create(req.body);
+    const newApartment = await Apartment.create(data);
 
     res.status(201).json({
       status: "success",
@@ -225,32 +231,45 @@ exports.deleteApartment = async (req, res) => {
   }
 };
 
-// api/v1/tours/tours-within/233/center/34.111745,-118.113491/unit/mi
+// api/v1/tours/tours-within/233/center/34.111745,-118.113491/unit/km
 exports.getApartmentWithin = catchAsync(async (req, res, next) => {
   const { distance, latlng, unit } = req.params;
   const [lat, lng] = latlng.split(",");
 
   const radius = unit === "mi" ? distance / 3963.2 : distance / 6378.1;
-  console.log(radius);
+
   if (!lat || !lng) {
-    next(
+    return next(
       new AppError(
-        "Please provide latitur and longitude in the format lat,lng",
+        "Please provide latitude and longitude in the format lat,lng",
         400
       )
     );
   }
 
-  const apartment = await Apartment.find({
+  // Construct the geospatial filter
+  const geoFilter = {
     startLocation: { $geoWithin: { $centerSphere: [[lng, lat], radius] } },
-  });
-  console.log(distance, lat, lng, unit);
+  };
 
+  // Create the query with the geospatial filter
+  let query = Apartment.find(geoFilter);
+
+  // Apply additional filters, sorting, limiting fields, and pagination
+  const features = new APIFeatures(query, req.query)
+    .filter()
+    .sort()
+    .limitFields()
+    .paginate();
+
+  const apartments = await features.query;
+
+  // Send response
   res.status(200).json({
     status: "success",
-    results: apartment.length,
+    results: apartments.length,
     data: {
-      data: apartment,
+      apartments,
     },
   });
 });
