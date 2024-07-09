@@ -48,12 +48,16 @@ exports.getApartment = async (req, res) => {
 };
 
 exports.createApartment = async (req, res) => {
-  console.log(req.body);
+  // console.log(req.body);
+
   const data = req.body;
+  const { latitude, longitude } = req.body.address.coordinates;
+
   data.startLocation = data.startLocation || {
     type: "Point",
-    coordinates: [65.234556, 23.232323],
+    coordinates: [JSON.parse(longitude), JSON.parse(latitude)],
   };
+
   try {
     const newApartment = await Apartment.create(data);
 
@@ -247,15 +251,12 @@ exports.getApartmentWithin = catchAsync(async (req, res, next) => {
     );
   }
 
-  // Construct the geospatial filter
   const geoFilter = {
     startLocation: { $geoWithin: { $centerSphere: [[lng, lat], radius] } },
   };
 
-  // Create the query with the geospatial filter
-  let query = Apartment.find(geoFilter);
+  let query = Apartment.find(geoFilter) || Apartment.find();
 
-  // Apply additional filters, sorting, limiting fields, and pagination
   const features = new APIFeatures(query, req.query)
     .filter()
     .sort()

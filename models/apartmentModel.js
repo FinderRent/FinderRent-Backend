@@ -185,7 +185,7 @@ const apartmentSchema = new mongoose.Schema({
   ],
   apartmentType: {
     type: String,
-    trim: true,
+    // trim: true,
     require: [true, "An apartment must have a type"],
   },
   tenants: [
