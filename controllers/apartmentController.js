@@ -47,33 +47,77 @@ exports.getApartment = async (req, res) => {
   }
 };
 
-exports.createApartment = async (req, res) => {
+exports.createApartment = catchAsync(async (req, res, next) => {
   // console.log(req.body);
 
   const data = req.body;
   const { latitude, longitude } = req.body.address.coordinates;
 
-  data.startLocation = data.startLocation || {
-    type: "Point",
-    coordinates: [JSON.parse(longitude), JSON.parse(latitude)],
-  };
-
-  try {
-    const newApartment = await Apartment.create(data);
-
-    res.status(201).json({
-      status: "success",
-      data: {
-        tour: newApartment,
-      },
-    });
-  } catch (err) {
-    res.status(404).json({
-      status: "fail",
-      message: err,
-    });
+  if (
+    req.body.address.city &&
+    req.body.address.street &&
+    req.body.address.buildingNumber
+  ) {
+    data.startLocation = data.startLocation || {
+      type: "Point",
+      coordinates: [JSON.parse(longitude), JSON.parse(latitude)],
+    };
   }
-};
+  const requiredFields = [
+    "floor",
+    "numberOfRooms",
+    "price",
+    "totalCapacity",
+    "realTimeCapacity",
+    "apartmentType",
+    "about",
+  ];
+
+  const requiredAddressFields = [
+    "street",
+    "city",
+    "country",
+    "buildingNumber",
+    "apartmentNumber",
+    "coordinates.latitude",
+    "coordinates.longitude",
+  ];
+
+  // Check for top-level required fields
+  for (const field of requiredFields) {
+    if (!req.body[field]) {
+      return next(new AppError(`Field ${field} is required.`, 400));
+    }
+  }
+
+  // Check for nested address fields
+  if (!req.body.address) {
+    return next(new AppError("Address field is required.", 400));
+  }
+
+  for (const field of requiredAddressFields) {
+    const fieldParts = field.split(".");
+    let value = req.body.address;
+
+    for (const part of fieldParts) {
+      if (value[part] === undefined) {
+        return next(
+          new AppError(`Field ${field} is required in address.`, 400)
+        );
+      }
+      value = value[part];
+    }
+  }
+
+  const newApartment = await Apartment.create(data);
+
+  res.status(201).json({
+    status: "success",
+    data: {
+      apartment: newApartment,
+    },
+  });
+});
 
 exports.updateEditedApartment = async (req, res) => {
   try {
