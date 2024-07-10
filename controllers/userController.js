@@ -76,11 +76,13 @@ exports.updateMe = catchAsync(async (req, res, next) => {
     "funFact",
     "email"
   );
+
   if (req.body.coordinates) {
     filterdedBody.coordinates = JSON.parse(req.body.coordinates);
   }
 
   if (req.file) {
+    console.log(req.file);
     const file = getDataUri(req.file);
 
     if (req.user.avatar.public_id) {
