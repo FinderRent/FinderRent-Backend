@@ -340,8 +340,6 @@ exports.getDistances = catchAsync(async (req, res, next) => {
       )
     );
   }
-  const count = await Apartment.countDocuments();
-  console.log(`Number of apartments: ${count}`);
 
   const distances = await Apartment.aggregate([
     {
