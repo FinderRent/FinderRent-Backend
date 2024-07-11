@@ -124,6 +124,12 @@ exports.updateEditedApartment = async (req, res) => {
     // const { id } = req.params; // Get apartment ID from route params
     // const { userID, action, ...updateData } = req.body; // Destructure userID and action from request body, and store the rest in updateData
     const { id, ...updateData } = req.body; // Destructure userID and action from request body, and store the rest in updateData
+    const { latitude, longitude } = req.body.address.coordinates;
+
+    updateData.startLocation = updateData.startLocation || {
+      type: "Point",
+      coordinates: [parseFloat(longitude), parseFloat(latitude)],
+    };
 
     let apartment = await Apartment.findById(id);
 
@@ -315,6 +321,51 @@ exports.getApartmentWithin = catchAsync(async (req, res, next) => {
     results: apartments.length,
     data: {
       apartments,
+    },
+  });
+});
+
+exports.getDistances = catchAsync(async (req, res, next) => {
+  // console.log(req.params);
+  const { latlng, unit } = req.params;
+  const [lat, lng] = latlng.split(",");
+
+  const muliplier = unit === "mi" ? 0.000621371 : 0.001;
+
+  if (!lat || !lng) {
+    next(
+      new AppError(
+        "Please provide latitur and longitude in the format lat,lng",
+        400
+      )
+    );
+  }
+  const count = await Apartment.countDocuments();
+  console.log(`Number of apartments: ${count}`);
+
+  const distances = await Apartment.aggregate([
+    {
+      $geoNear: {
+        near: {
+          type: "Point",
+          coordinates: [lng * 1, lat * 1],
+        },
+        distanceField: "distance",
+        distanceMultiplier: muliplier,
+      },
+    },
+    {
+      $project: {
+        distance: 1,
+        name: 1,
+      },
+    },
+  ]);
+
+  res.status(200).json({
+    status: "success",
+    data: {
+      data: distances,
     },
   });
 });

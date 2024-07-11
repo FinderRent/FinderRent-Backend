@@ -19,6 +19,8 @@ router
   .route("/apartments-within/:distance/center/:latlng/unit/:unit")
   .get(apartmentController.getApartmentWithin);
 
-// router.route("/:apartmentID/:userID").get(apartmentController.isFavourite);
+router
+  .route("/distances/:latlng/unit/:unit")
+  .get(apartmentController.getDistances);
 
 module.exports = router;
