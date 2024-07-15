@@ -76,6 +76,7 @@ exports.updateMe = catchAsync(async (req, res, next) => {
     "funFact",
     "email"
   );
+
   if (req.body.coordinates) {
     filterdedBody.coordinates = JSON.parse(req.body.coordinates);
   }
