@@ -41,14 +41,38 @@ const filterObj = (obj, ...allowedFields) => {
 };
 
 exports.getAllUsers = catchAsync(async (req, res, next) => {
-  const users = await User.find();
-  res.status(200).json({
-    // status: "success",
-    results: users.length,
-    data: {
-      users,
-    },
-  });
+  try {
+    //EXECUTE THE QUERY
+    const features = new APIFeatures(User.find(), req.query)
+      .filter()
+      .sort()
+      .limitFields()
+      .paginate();
+
+    const users = await features.query;
+
+    //SEND RESPONSE
+    res.status(200).json({
+      status: "success",
+      results: users.length,
+      data: {
+        users,
+      },
+    });
+  } catch (err) {
+    res.status(404).json({
+      status: "fail",
+      message: err,
+    });
+  }
+  // const users = await User.find();
+  // res.status(200).json({
+  //   // status: "success",
+  //   results: users.length,
+  //   data: {
+  //     users,
+  //   },
+  // });
 });
 
 exports.getUser = catchAsync(async (req, res, next) => {

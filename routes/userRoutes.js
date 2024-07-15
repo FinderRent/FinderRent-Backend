@@ -24,12 +24,15 @@ router.patch(
   userController.updateMe
 );
 
-router.route("/").get(userController.getAllUsers);
+router
+  .route("/")
+  .get(userController.getAllUsers)
+  .get(userController.getAllStudents);
 router
   .route("/:id")
   .get(userController.getUser)
   .patch(userController.updateFavourite);
 
-router.route("/students").get(userController.getAllStudents);
+// router.route("/students").get(userController.getAllStudents);
 
 module.exports = router;
