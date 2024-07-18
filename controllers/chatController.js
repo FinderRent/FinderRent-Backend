@@ -84,3 +84,14 @@ exports.updateChat = catchAsync(async (req, res, next) => {
 
   res.status(200).json(updateChat);
 });
+
+exports.deleteChat = catchAsync(async (req, res, next) => {
+  const chat = await Chat.findByIdAndDelete(req.params.id);
+
+  console.log(chat);
+
+  res.status(204).json({
+    status: "success",
+    data: null,
+  });
+});
