@@ -3,7 +3,6 @@ const cloudinary = require("cloudinary");
 
 const APIFeatures = require("./../utils/apiFeatures");
 const User = require("../models/userModel");
-const Apartment = require("./../models/apartmentModel");
 const catchAsync = require("../utils/catchAsync");
 const AppError = require("../utils/appError");
 const { getDataUri } = require("../utils/features");
@@ -65,14 +64,6 @@ exports.getAllUsers = catchAsync(async (req, res, next) => {
       message: err,
     });
   }
-  // const users = await User.find();
-  // res.status(200).json({
-  //   // status: "success",
-  //   results: users.length,
-  //   data: {
-  //     users,
-  //   },
-  // });
 });
 
 exports.getUser = catchAsync(async (req, res, next) => {
