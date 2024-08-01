@@ -91,6 +91,7 @@ exports.updateMe = catchAsync(async (req, res, next) => {
     req.body,
     "firstName",
     "lastName",
+    "country",
     "age",
     "phone",
     "academic",
@@ -135,81 +136,6 @@ exports.updateMe = catchAsync(async (req, res, next) => {
     },
   });
 });
-
-exports.updateFavourite = async (req, res) => {
-  try {
-    const { id } = req.params; // Get user ID from route params
-    const { apartmentID, action } = req.body;
-    let user;
-    let apartment;
-    try {
-      user = await User.findById(id);
-    } catch (err) {
-      return res.status(404).json({
-        status: "fail",
-        message: "user not found",
-      });
-    }
-    try {
-      apartment = await Apartment.findById(apartmentID);
-    } catch (err) {
-      return res.status(404).json({
-        status: "fail",
-        message: "apartment not found",
-      });
-    }
-
-    if (action === "add") {
-      // Check if the user ID is already in the interesteds array
-      const isAlreadyFavourite = user.favouriteApartments.includes(
-        apartment._id
-      );
-
-      if (isAlreadyFavourite) {
-        return res.status(400).json({
-          status: "fail",
-          message: "apartment is already favourite for this user",
-        });
-      }
-      user.favouriteApartments.push(apartment);
-    } else if (action === "remove") {
-      const isAlreadyFavourite = user.favouriteApartments.includes(
-        apartment._id
-      );
-      console.log(isAlreadyFavourite);
-      if (isAlreadyFavourite) {
-        user.favouriteApartments = user.favouriteApartments.filter(
-          (favourite) => favourite.toString() !== apartmentID
-        );
-      } else {
-        return res.status(400).json({
-          status: "fail",
-          message: "apartment is not favourite for this user",
-        });
-      }
-    } else {
-      return res.status(400).json({
-        status: "fail",
-        message: "Invalid action. Must be 'add' or 'remove'.",
-      });
-    }
-
-    // Save the updated apartment object
-    await user.save();
-
-    res.status(200).json({
-      status: "success",
-      data: {
-        user,
-      },
-    });
-  } catch (err) {
-    res.status(500).json({
-      status: "error",
-      message: err.message,
-    });
-  }
-};
 
 exports.getAllStudents = async (req, res) => {
   try {

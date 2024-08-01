@@ -28,11 +28,6 @@ router
   .route("/")
   .get(userController.getAllUsers)
   .get(userController.getAllStudents);
-router
-  .route("/:id")
-  .get(userController.getUser)
-  .patch(userController.updateFavourite);
-
-// router.route("/students").get(userController.getAllStudents);
+router.route("/:id").get(userController.getUser);
 
 module.exports = router;
