@@ -28,6 +28,10 @@ const userSchema = new mongoose.Schema({
     type: String,
     required: [true, "Please fill in last name."],
   },
+  country: {
+    type: String,
+    required: [true, "Please fill in the country."],
+  },
   avatar: {
     public_id: { type: String, default: undefined },
     url: {
