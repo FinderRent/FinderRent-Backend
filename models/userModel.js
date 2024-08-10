@@ -13,6 +13,18 @@ const chatsSchema = new mongoose.Schema({
   },
 });
 
+const socialNetworksSchema = new mongoose.Schema({
+  instagram: {
+    type: String,
+  },
+  facebook: {
+    type: String,
+  },
+  linkedin: {
+    type: String,
+  },
+});
+
 const userSchema = new mongoose.Schema({
   pushToken: {
     type: String,
@@ -121,6 +133,9 @@ const userSchema = new mongoose.Schema({
       default: [],
     },
   ],
+  socialNetworks: {
+    type: socialNetworksSchema,
+  },
   otp: Number,
   otpExpire: Date,
   passwordChangedAt: Date,
