@@ -160,14 +160,21 @@ const apartmentSchema = new mongoose.Schema({
     type: Number,
     required: [true, "An apartment must have a monthly price"],
   },
-  images: {
-    public_id: { type: String, default: undefined },
-    url: {
+  // images: {
+  //   public_id: { type: String, default: undefined },
+  //   url: {
+  //     type: String,
+  //     default:
+  //       "https://res.cloudinary.com/dxu8n16pa/image/upload/v1719410477/50819_xfwqdf.jpg",
+  //   },
+  // },
+  images: [
+    {
       type: String,
       default:
-        "https://res.cloudinary.com/dxu8n16pa/image/upload/v1719410477/50819_xfwqdf.jpg",
+        "https://res.cloudinary.com/finderent/image/upload/v1722150375/home-insurance-cut-out-icon_ffdtpf.jpg",
     },
-  },
+  ],
   //an array of the interested students that marks the apartment
   interesteds: [
     {

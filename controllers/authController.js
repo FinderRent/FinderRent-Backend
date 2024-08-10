@@ -78,6 +78,7 @@ exports.signup = catchAsync(async (req, res, next) => {
       email: req.body.email,
       password: req.body.password,
       passwordConfirm: req.body.passwordConfirm,
+      socialNetworks: req.body.socialNetworks,
     });
 
     createSendToken(newStudent, 200, res);
