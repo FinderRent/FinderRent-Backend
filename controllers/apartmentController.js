@@ -177,26 +177,14 @@ exports.createApartment = catchAsync(async (req, res, next) => {
   ];
 
   const requiredAddressFields = [
-    "street",
-    "city",
     "country",
+    "city",
+    "street",
     "buildingNumber",
     "apartmentNumber",
     "coordinates.latitude",
     "coordinates.longitude",
   ];
-
-  // Check for top-level required fields
-  for (const field of requiredFields) {
-    if (!req.body[field]) {
-      return next(new AppError(`Field ${field} is required.`, 400));
-    }
-  }
-
-  // Check for nested address fields
-  if (!req.body.address) {
-    return next(new AppError("Address field is required.", 400));
-  }
 
   for (const field of requiredAddressFields) {
     const fieldParts = field.split(".");
@@ -210,6 +198,18 @@ exports.createApartment = catchAsync(async (req, res, next) => {
       }
       value = value[part];
     }
+  }
+
+  // Check for top-level required fields
+  for (const field of requiredFields) {
+    if (!req.body[field]) {
+      return next(new AppError(`Field ${field} is required.`, 400));
+    }
+  }
+
+  // Check for nested address fields
+  if (!req.body.address) {
+    return next(new AppError("Address field is required.", 400));
   }
 
   const newApartment = await Apartment.create(data);
