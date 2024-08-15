@@ -336,58 +336,6 @@ exports.updateApartment = async (req, res) => {
   }
 };
 
-exports.isFavourite = async (req, res) => {
-  const { apartmentID, userID } = req.params;
-  let user;
-  let apartment;
-  try {
-    apartment = await Apartment.findById(apartmentID);
-  } catch (err) {
-    return res.status(404).json({
-      status: "fail",
-      message: "apartment not found",
-    });
-  }
-  try {
-    user = await User.findById(userID);
-  } catch (err) {
-    return res.status(404).json({
-      status: "fail",
-      message: "user not found",
-    });
-  }
-
-  const isAlreadyInterested = apartment.interesteds.includes(user._id);
-
-  if (isAlreadyInterested) {
-    res.status(200).json({
-      status: "success",
-      data: true,
-    });
-  } else {
-    res.status(200).json({
-      status: "success",
-      data: false,
-    });
-  }
-};
-
-exports.deleteApartment = async (req, res) => {
-  try {
-    await Apartment.findByIdAndDelete(req.params.id);
-
-    res.status(204).json({
-      status: "success",
-      data: null,
-    });
-  } catch (err) {
-    res.status(404).json({
-      status: "fail",
-      message: err,
-    });
-  }
-};
-
 // api/v1/tours/tours-within/233/center/34.111745,-118.113491/unit/km
 exports.getApartmentWithin = catchAsync(async (req, res, next) => {
   const { distance, latlng, unit } = req.params;
@@ -470,3 +418,51 @@ exports.getDistances = catchAsync(async (req, res, next) => {
     },
   });
 });
+
+exports.deleteApartment = catchAsync(async (req, res, next) => {
+  const apartment = await Apartment.findByIdAndDelete(req.params.id);
+
+  console.log(apartment);
+
+  res.status(204).json({
+    status: "success",
+    data: null,
+  });
+});
+
+/////
+exports.isFavourite = async (req, res) => {
+  const { apartmentID, userID } = req.params;
+  let user;
+  let apartment;
+  try {
+    apartment = await Apartment.findById(apartmentID);
+  } catch (err) {
+    return res.status(404).json({
+      status: "fail",
+      message: "apartment not found",
+    });
+  }
+  try {
+    user = await User.findById(userID);
+  } catch (err) {
+    return res.status(404).json({
+      status: "fail",
+      message: "user not found",
+    });
+  }
+
+  const isAlreadyInterested = apartment.interesteds.includes(user._id);
+
+  if (isAlreadyInterested) {
+    res.status(200).json({
+      status: "success",
+      data: true,
+    });
+  } else {
+    res.status(200).json({
+      status: "success",
+      data: false,
+    });
+  }
+};
