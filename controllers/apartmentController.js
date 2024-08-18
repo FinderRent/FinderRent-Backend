@@ -4,6 +4,8 @@ const APIFeatures = require("./../utils/apiFeatures");
 const catchAsync = require("../utils/catchAsync");
 const AppError = require("../utils/appError");
 const multer = require("multer");
+const cloudinary = require("cloudinary");
+
 // const fs = require("fs");
 // const FormData = require("form-data");
 
@@ -268,74 +270,6 @@ exports.updateEditedApartment = async (req, res) => {
   }
 };
 
-exports.updateApartment = async (req, res) => {
-  try {
-    const { id } = req.params; // Get user ID from route params
-    const { userID, action } = req.body;
-    let user;
-    let apartment;
-    try {
-      apartment = await Apartment.findById(id);
-    } catch (err) {
-      return res.status(404).json({
-        status: "fail",
-        message: "apartment not found",
-      });
-    }
-    try {
-      user = await User.findById(userID);
-    } catch (err) {
-      return res.status(404).json({
-        status: "fail",
-        message: "user not found",
-      });
-    }
-
-    if (action === "add") {
-      const isAlreadyInterested = apartment.interesteds.includes(user._id);
-      if (isAlreadyInterested) {
-        return res.status(400).json({
-          status: "fail",
-          message: "user is already interested in this apartment",
-        });
-      }
-      apartment.interesteds.push(user);
-    } else if (action === "remove") {
-      const isAlreadyInterested = apartment.interesteds.includes(user._id);
-      if (isAlreadyInterested) {
-        apartment.interesteds = apartment.interesteds.filter(
-          (interested) => interested.toString() !== userID
-        );
-      } else {
-        return res.status(400).json({
-          status: "fail",
-          message: "user is not interested for this apartment",
-        });
-      }
-    } else {
-      return res.status(400).json({
-        status: "fail",
-        message: "Invalid action. Must be 'add' or 'remove'.",
-      });
-    }
-
-    // Save the updated apartment object
-    await apartment.save();
-
-    res.status(200).json({
-      status: "success",
-      data: {
-        user,
-      },
-    });
-  } catch (err) {
-    res.status(500).json({
-      status: "error",
-      message: err.message,
-    });
-  }
-};
-
 // api/v1/tours/tours-within/233/center/34.111745,-118.113491/unit/km
 exports.getApartmentWithin = catchAsync(async (req, res, next) => {
   const { distance, latlng, unit } = req.params;
@@ -420,9 +354,21 @@ exports.getDistances = catchAsync(async (req, res, next) => {
 });
 
 exports.deleteApartment = catchAsync(async (req, res, next) => {
-  const apartment = await Apartment.findByIdAndDelete(req.params.id);
+  const apartment = await Apartment.findById(req.params.id);
 
-  console.log(apartment);
+  // Extract the relevant part from each URL, excluding the ".jpg" extension
+  const imagePaths = apartment.images.map((url) => {
+    const match = url.match(/Apartments\/([^\/]+)\.jpg$/);
+    return match ? match[1] : null;
+  });
+
+  // Delete each image from Cloudinary
+  for (const image_id of imagePaths) {
+    const public_id = `Apartments/${image_id}`;
+    await cloudinary.v2.uploader.destroy(public_id);
+  }
+
+  console.log("Deleted images:", imagePaths);
 
   res.status(204).json({
     status: "success",
@@ -430,7 +376,75 @@ exports.deleteApartment = catchAsync(async (req, res, next) => {
   });
 });
 
-/////
+///////
+exports.updateApartment = async (req, res) => {
+  try {
+    const { id } = req.params; // Get user ID from route params
+    const { userID, action } = req.body;
+    let user;
+    let apartment;
+    try {
+      apartment = await Apartment.findById(id);
+    } catch (err) {
+      return res.status(404).json({
+        status: "fail",
+        message: "apartment not found",
+      });
+    }
+    try {
+      user = await User.findById(userID);
+    } catch (err) {
+      return res.status(404).json({
+        status: "fail",
+        message: "user not found",
+      });
+    }
+
+    if (action === "add") {
+      const isAlreadyInterested = apartment.interesteds.includes(user._id);
+      if (isAlreadyInterested) {
+        return res.status(400).json({
+          status: "fail",
+          message: "user is already interested in this apartment",
+        });
+      }
+      apartment.interesteds.push(user);
+    } else if (action === "remove") {
+      const isAlreadyInterested = apartment.interesteds.includes(user._id);
+      if (isAlreadyInterested) {
+        apartment.interesteds = apartment.interesteds.filter(
+          (interested) => interested.toString() !== userID
+        );
+      } else {
+        return res.status(400).json({
+          status: "fail",
+          message: "user is not interested for this apartment",
+        });
+      }
+    } else {
+      return res.status(400).json({
+        status: "fail",
+        message: "Invalid action. Must be 'add' or 'remove'.",
+      });
+    }
+
+    // Save the updated apartment object
+    await apartment.save();
+
+    res.status(200).json({
+      status: "success",
+      data: {
+        user,
+      },
+    });
+  } catch (err) {
+    res.status(500).json({
+      status: "error",
+      message: err.message,
+    });
+  }
+};
+
 exports.isFavourite = async (req, res) => {
   const { apartmentID, userID } = req.params;
   let user;
