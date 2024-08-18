@@ -356,6 +356,10 @@ exports.getDistances = catchAsync(async (req, res, next) => {
 exports.deleteApartment = catchAsync(async (req, res, next) => {
   const apartment = await Apartment.findById(req.params.id);
 
+  if (!apartment) {
+    return next(new AppError("No apartment found with that ID", 404));
+  }
+
   // Extract the relevant part from each URL, excluding the ".jpg" extension
   const imagePaths = apartment.images.map((url) => {
     const match = url.match(/Apartments\/([^\/]+)\.jpg$/);
@@ -363,12 +367,12 @@ exports.deleteApartment = catchAsync(async (req, res, next) => {
   });
 
   // Delete each image from Cloudinary
-  for (const image_id of imagePaths) {
-    const public_id = `Apartments/${image_id}`;
+  for (const imagePath of imagePaths) {
+    const public_id = `Apartments/${imagePath}`;
     await cloudinary.v2.uploader.destroy(public_id);
   }
 
-  console.log("Deleted images:", imagePaths);
+  await Apartment.findByIdAndDelete(req.params.id);
 
   res.status(204).json({
     status: "success",
