@@ -1,44 +1,11 @@
-const Apartment = require("./../models/apartmentModel");
-const User = require("../models/userModel");
-const APIFeatures = require("./../utils/apiFeatures");
-const catchAsync = require("../utils/catchAsync");
-const AppError = require("../utils/appError");
 const multer = require("multer");
 const cloudinary = require("cloudinary");
 
-// const fs = require("fs");
-// const FormData = require("form-data");
-
-// const sharp = require("sharp");
-
-// const multerStorage = multer.memoryStorage();
-
-// const multerFilter = (req, file, cb) => {
-//   if (file.mimetype.startWith("image")) {
-//     cb(null, true);
-//   } else {
-//     cb(new AppError("Not an Image. Please updload only images", 400), false);
-//   }
-// };
-
-// const upload = multer({
-//   storage: multerStorage,
-//   fileFilter: multerFilter,
-// });
-
-// exports.uploadApartmentImages = upload.fields([
-//   { name: "imageCover", maxCount: 1 },
-//   { name: "images", maxCount: 3 },
-// ]);
-
-// upload.single("image");
-// upload.array("images", 5);
-
-// exports.resizeApartmentImages = (req, res, next) => {
-//   console.log(req.files);
-//   next();
-// };
-
+const Apartment = require("./../models/apartmentModel");
+const User = require("../models/userModel");
+const catchAsync = require("../utils/catchAsync");
+const APIFeatures = require("./../utils/apiFeatures");
+const AppError = require("../utils/appError");
 //-----------------------------------------------------------------------------
 const multerStorage = multer.memoryStorage({
   destination: (req, file, cb) => {
@@ -109,52 +76,6 @@ exports.getApartment = async (req, res) => {
 };
 
 exports.createApartment = catchAsync(async (req, res, next) => {
-  // console.log(req.body);
-  // exports.createApartment = async (req, res) => {
-  // try {
-  // console.log("1");
-
-  // const filePath = req.body.images.url; // Ensure this is a local file path
-  // console.log("Reading file from:", filePath);
-  // console.log("2");
-
-  // if (!fs.existsSync(filePath)) {
-  //   throw new Error("File does not exist");
-  // }
-  // console.log("3");
-  // const formData = new FormData();
-  // formData.append("file", fs.createReadStream(filePath));
-  // formData.append("upload_preset", "FindeRent");
-  // formData.append("cloud_name", "finderent");
-
-  // const cloudinaryResponse = await axios.post(
-  //   "https://api.cloudinary.com/v1_1/finderent/image/upload",
-  //   formData,
-  //   {
-  //     headers: formData.getHeaders(),
-  //   }
-  // );
-
-  // const { data } = cloudinaryResponse;
-  // if (data.secure_url) {
-  //   req.body.images.url = data.secure_url; // Store the image URL in state
-  // } else {
-  //   throw new Error("Failed to get the image URL from Cloudinary");
-  // }
-
-  // const file = getDataUri(req.file);
-  // if (req.apartment.images.public_id) {
-  //   await cloudinary.v2.uploader.destroy(req.apartment.images.public_id);
-  // }
-  // const uploadToCloud = await cloudinary.v2.uploader.upload(file.content, {
-  //   folder: "Apartments",
-  // });
-  // req.body.images = {
-  //   public_id: uploadToCloud.public_id,
-  //   url: uploadToCloud.secure_url,
-  // };
-  // const newApartment = await Apartment.create(req.body);
-
   const data = req.body;
   const { latitude, longitude } = req.body.address.coordinates;
 
@@ -226,8 +147,6 @@ exports.createApartment = catchAsync(async (req, res, next) => {
 
 exports.updateEditedApartment = async (req, res) => {
   try {
-    // const { id } = req.params; // Get apartment ID from route params
-    // const { userID, action, ...updateData } = req.body; // Destructure userID and action from request body, and store the rest in updateData
     const { id, ...updateData } = req.body; // Destructure userID and action from request body, and store the rest in updateData
     const { latitude, longitude } = req.body.address.coordinates;
 
