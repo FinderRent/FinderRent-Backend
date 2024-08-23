@@ -105,101 +105,105 @@ const addressSchema = new mongoose.Schema({
 });
 
 //Defining apartment schema
-const apartmentSchema = new mongoose.Schema({
-  address: {
-    type: addressSchema,
-    require: [true, "An apartment must have address"],
-  },
-  distanceFromAcademy: {
-    type: Number,
-    require: [true, "An apartment must have distance fron the academy"],
-    min: [0, "Distance must be positive number"],
-  },
-  startLocation: {
-    // GeoJSON
-    type: {
+const apartmentSchema = new mongoose.Schema(
+  {
+    address: {
+      type: addressSchema,
+      require: [true, "An apartment must have address"],
+    },
+    distanceFromAcademy: {
+      type: Number,
+      require: [true, "An apartment must have distance fron the academy"],
+      min: [0, "Distance must be positive number"],
+    },
+    startLocation: {
+      // GeoJSON
+      type: {
+        type: String,
+        default: "Point",
+        enum: ["Point"],
+      },
+      coordinates: [Number],
+    },
+    totalCapacity: {
+      type: Number,
+      require: [true, "An apartment must have a capacity"],
+      min: [0, "Apartment capacity must be positive"],
+      max: [10, "Apartment capacity must be bigger maximun 10"],
+    },
+    realTimeCapacity: {
+      type: Number,
+      require: [true, "An apartment must have a capacity"],
+      min: [0, "Apartment capacity must be positive"],
+      max: [10, "Apartment capacity must be bigger maximun 10"],
+      default: 0,
+    },
+    about: {
       type: String,
-      default: "Point",
-      enum: ["Point"],
+      trim: true,
     },
-    coordinates: [Number],
-  },
-  totalCapacity: {
-    type: Number,
-    require: [true, "An apartment must have a capacity"],
-    min: [0, "Apartment capacity must be positive"],
-    max: [10, "Apartment capacity must be bigger maximun 10"],
-  },
-  realTimeCapacity: {
-    type: Number,
-    require: [true, "An apartment must have a capacity"],
-    min: [0, "Apartment capacity must be positive"],
-    max: [10, "Apartment capacity must be bigger maximun 10"],
-    default: 0,
-  },
-  about: {
-    type: String,
-    trim: true,
-  },
-  numberOfRooms: {
-    type: Number,
-    require: [true, "An apartment must have a rooms number"],
-    min: [1, "Number of rooms must be bigger than 0"],
-    max: [10, "Number of rooms must be lower than 11"],
-  },
-  apartmentContent: {
-    type: apartmentContentSchema,
-    require: [true, "An apartment must have content"],
-  },
-  rating: {
-    type: Number,
-    min: [0, "rating number equal or bigger than 0"],
-    max: [5, "rating number equal or smaller than 5"],
-  },
-  price: {
-    type: Number,
-    required: [true, "An apartment must have a monthly price"],
-  },
-  currency: {
-    currency: { type: String },
-    symbol: { type: String },
-  },
-  images: [
-    {
+    numberOfRooms: {
+      type: Number,
+      require: [true, "An apartment must have a rooms number"],
+      min: [1, "Number of rooms must be bigger than 0"],
+      max: [10, "Number of rooms must be lower than 11"],
+    },
+    apartmentContent: {
+      type: apartmentContentSchema,
+      require: [true, "An apartment must have content"],
+    },
+    rating: {
+      type: Number,
+      min: [0, "rating number equal or bigger than 0"],
+      max: [5, "rating number equal or smaller than 5"],
+    },
+    price: {
+      type: Number,
+      required: [true, "An apartment must have a monthly price"],
+    },
+    currency: {
+      currency: { type: String },
+      symbol: { type: String },
+    },
+    images: [
+      {
+        type: String,
+        default:
+          "https://res.cloudinary.com/finderent/image/upload/v1722150375/home-insurance-cut-out-icon_ffdtpf.jpg",
+      },
+    ],
+    //an array of the interested students that marks the apartment
+    interesteds: [
+      {
+        type: mongoose.Schema.Types.ObjectId,
+        ref: "users",
+      },
+    ],
+    floor: {
+      type: Number,
+      require: [true, "An apartment must have a floor number"],
+    },
+    owner: [
+      {
+        type: mongoose.Schema.Types.ObjectId,
+        ref: "users",
+      },
+    ],
+    apartmentType: {
       type: String,
-      default:
-        "https://res.cloudinary.com/finderent/image/upload/v1722150375/home-insurance-cut-out-icon_ffdtpf.jpg",
+      // trim: true,
+      require: [true, "An apartment must have a type"],
     },
-  ],
-  //an array of the interested students that marks the apartment
-  interesteds: [
-    {
-      type: mongoose.Schema.Types.ObjectId,
-      ref: "users",
-    },
-  ],
-  floor: {
-    type: Number,
-    require: [true, "An apartment must have a floor number"],
+    tenants: [
+      {
+        type: mongoose.Schema.Types.ObjectId,
+        ref: "users",
+      },
+    ],
   },
-  owner: [
-    {
-      type: mongoose.Schema.Types.ObjectId,
-      ref: "users",
-    },
-  ],
-  apartmentType: {
-    type: String,
-    // trim: true,
-    require: [true, "An apartment must have a type"],
-  },
-  tenants: [
-    {
-      type: mongoose.Schema.Types.ObjectId,
-      ref: "users",
-    },
-  ],
-});
+  { timestamps: true }
+);
+
 apartmentSchema.index({ startLocation: "2dsphere" });
 
 //creating the schema in the DBs
