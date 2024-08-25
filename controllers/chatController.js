@@ -15,13 +15,22 @@ exports.getAllChats = catchAsync(async (req, res, next) => {
 });
 
 exports.createChat = catchAsync(async (req, res, next) => {
-  //checking if chat is already exist
-  const user = await User.findById(req.body.senderId);
+  // Checking if chat already exists
+  const sender = await User.findById(req.body.senderId);
+  const receiver = await User.findById(req.body.receiverId);
 
   let chatExists = false;
 
-  for (const chat of user.chats) {
+  for (const chat of sender.chats) {
     if (chat.userID === req.body.receiverId) {
+      chatExists = true;
+      break;
+    }
+  }
+
+  // You can uncomment and use the receiver check if needed
+  for (const chat of receiver.chats) {
+    if (chat.userID === req.body.senderId) {
       chatExists = true;
       break;
     }
@@ -33,22 +42,24 @@ exports.createChat = catchAsync(async (req, res, next) => {
     });
     const result = await newChat.save();
 
-    //add the studentID to landlord chats array----
-    user.chats.push({
+    // Add the receiverID to sender's chats array
+    sender.chats.push({
       userID: req.body.receiverId,
       chatID: result._id,
     });
-    await user.save();
+    await sender.save();
+
+    // Add the senderID to receiver's chats array
+    receiver.chats.push({
+      userID: req.body.senderId,
+      chatID: result._id,
+    });
+    await receiver.save();
 
     res.status(200).json(result);
+  } else {
+    res.status(200).json({ message: "Chat already exists" });
   }
-
-  // const newChat = new Chat({
-  //   members: [req.body.senderId, req.body.receiverId],
-  // });
-
-  // const result = await newChat.save();
-  res.status(200);
 });
 
 exports.userChats = catchAsync(async (req, res, next) => {
@@ -86,9 +97,29 @@ exports.updateChat = catchAsync(async (req, res, next) => {
 });
 
 exports.deleteChat = catchAsync(async (req, res, next) => {
-  const chat = await Chat.findByIdAndDelete(req.params.id);
+  const chat = await Chat.findById(req.params.id);
 
-  console.log(chat);
+  if (!chat) {
+    return next(new AppError("Chat not found", 404));
+  }
+
+  // Iterate over all members in the chat
+  await Promise.all(
+    chat.members.map(async (memberId) => {
+      const user = await User.findById(memberId);
+
+      if (user) {
+        // Removing the chat from the user's chats array
+        user.chats = user.chats.filter(
+          (userChat) => !userChat.chatID.equals(chat._id)
+        );
+
+        await user.save();
+      }
+    })
+  );
+
+  await Chat.findByIdAndDelete(req.params.id);
 
   res.status(204).json({
     status: "success",
