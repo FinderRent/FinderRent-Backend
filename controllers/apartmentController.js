@@ -90,7 +90,7 @@ exports.createApartment = catchAsync(async (req, res, next) => {
     };
   }
   const requiredFields = [
-    "floor",
+    // "floor",
     "numberOfRooms",
     "price",
     "totalCapacity",

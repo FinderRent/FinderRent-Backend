@@ -181,7 +181,7 @@ const apartmentSchema = new mongoose.Schema(
     ],
     floor: {
       type: Number,
-      require: [true, "An apartment must have a floor number"],
+      // require: [true, "An apartment must have a floor number"],
     },
     owner: [
       {
