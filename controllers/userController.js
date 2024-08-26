@@ -96,6 +96,19 @@ exports.updateMe = catchAsync(async (req, res, next) => {
   if (req.body.coordinates) {
     filterdedBody.coordinates = JSON.parse(req.body.coordinates);
   }
+  if (req.body.socialNetworks) {
+    const socialNetworks = JSON.parse(req.body.socialNetworks);
+
+    console.log(socialNetworks.instagram);
+
+    filterdedBody.socialNetworks = {
+      instagram: socialNetworks?.instagram,
+      facebook: socialNetworks?.facebook,
+      linkedin: socialNetworks?.linkedin,
+      _id: socialNetworks?._id,
+    };
+    console.log(filterdedBody.socialNetworks);
+  }
 
   if (req.file) {
     console.log(req.file);
