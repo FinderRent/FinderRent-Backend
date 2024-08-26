@@ -138,6 +138,7 @@ const userSchema = new mongoose.Schema({
   ],
   socialNetworks: {
     type: socialNetworksSchema,
+    default: () => ({}),
   },
   otp: Number,
   otpExpire: Date,
