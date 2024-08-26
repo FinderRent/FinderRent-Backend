@@ -99,15 +99,11 @@ exports.updateMe = catchAsync(async (req, res, next) => {
   if (req.body.socialNetworks) {
     const socialNetworks = JSON.parse(req.body.socialNetworks);
 
-    console.log(socialNetworks.instagram);
-
     filterdedBody.socialNetworks = {
       instagram: socialNetworks?.instagram,
       facebook: socialNetworks?.facebook,
       linkedin: socialNetworks?.linkedin,
-      _id: socialNetworks?._id,
     };
-    console.log(filterdedBody.socialNetworks);
   }
 
   if (req.file) {
@@ -132,7 +128,6 @@ exports.updateMe = catchAsync(async (req, res, next) => {
     new: true,
     runValidators: true,
   });
-
   res.status(200).json({
     status: "success",
     data: {
