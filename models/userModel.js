@@ -16,15 +16,15 @@ const chatsSchema = new mongoose.Schema({
 const socialNetworksSchema = new mongoose.Schema({
   instagram: {
     type: String,
-    default: "https://",
+    default: "",
   },
   facebook: {
     type: String,
-    default: "https://",
+    default: "",
   },
   linkedin: {
     type: String,
-    default: "https://",
+    default: "",
   },
 });
 
