@@ -93,8 +93,8 @@ exports.createApartment = catchAsync(async (req, res, next) => {
     // "floor",
     "numberOfRooms",
     "price",
-    "totalCapacity",
-    "realTimeCapacity",
+    // "totalCapacity",
+    // "realTimeCapacity",
     "apartmentType",
     "about",
   ];
