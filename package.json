@@ -4,7 +4,8 @@
   "description": "The Server Side For the FinderRent-App.",
   "main": "server.js",
   "scripts": {
-    "start": "node server.js"
+    "start": "node server.js",
+    "test": "jest"
   },
   "author": "",
   "license": "ISC",
@@ -28,5 +29,8 @@
     "socket.io": "^4.7.2",
     "token-stream": "^1.0.0",
     "validator": "^13.11.0"
+  },
+  "devDependencies": {
+    "jest": "^29.7.0"
   }
 }
