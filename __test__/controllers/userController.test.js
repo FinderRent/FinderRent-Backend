@@ -1,8 +1,7 @@
 const User = require("../../models/userModel");
 const authController = require("../../controllers/authController");
 const AppError = require("../../utils/appError");
-const Email = require("../../utils/email"); // Adjust the import path as necessary
-
+const Email = require("../../utils/email");
 jest.mock("../../models/userModel");
 jest.mock("../../utils/appError");
 jest.mock("../../utils/email");

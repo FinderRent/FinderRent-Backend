@@ -4,14 +4,15 @@ const AppError = require("../utils/appError");
 const catchAsync = require("../utils/catchAsync");
 
 exports.getAllChats = catchAsync(async (req, res, next) => {
-  const chats = await Chat.find();
-  res.status(200).json({
-    // status: "success",
-    results: chats.length,
-    data: {
-      chats,
-    },
-  });
+  try {
+    const chats = await Chat.find();
+    res.status(200).json({
+      results: chats.length,
+      data: { chats },
+    });
+  } catch (error) {
+    next(error);
+  }
 });
 
 exports.createChat = catchAsync(async (req, res, next) => {
